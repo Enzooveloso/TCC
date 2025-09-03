@@ -1,0 +1,45 @@
+\chapter{Metodologia}\label{chap:metodologia}
+
+[TO DO]
+
+\section{Descrição do Problema}
+\subsection{Redes Neurais Artificiais}
+A rede neural artificial é um modelo computacional baseado na estrutura de um cérebro humano, pois tenta imitar a forma de como os neurônios se conectam e processam os pulsos eletromagnéticos em nosso cérebro para aprender a partir de dados, 
+identificar padrões e tomar decisões. Todo esse processo ocorre através do perceptron multicamdas (MLP), que é um modelo de deep learning que possui funções matemáticas que mapeiam um conjunto de valore de entrada para valores de saída .
+Em uma rede neural, milhões de imagens de um objeto são processadas para que a rede possa aprender, através de características visuais que definem aquele objeto para assim ser reconhecido posteriormente.
+
+Uma rede neural  é composta por unidades (nós) interconectadas, organizada em camadas.
+Um nó pode ser interpretado como um neurônio, cada nó recebe uma ou mais entradas, é realizado uma operação matemática 
+sobre essas entradas e produz uma saída. A operação matemática ocorre em duas etapas, a primeira é uma soma ponderada,
+onde o nó multiplica cada valor de entrada por um PESO e soma todos os resultados e a segunda etapa é uma função de ativação, 
+em que o resultado da soma da etapa anterior é passado por uma função de ativação, em que decide se um nó deve ser ATIVADO  e qual o nível de intensidade da saída.
+
+Para a conexão entre os nós e as camadas, há FIOS que ligam uns aos outros. Cada conexão tem um PESO associado, esse peso é o que determina a importância daquela conexão. 
+Um peso alto significa que aquela conexão é muito importante para o próximo neurônio, já um peso próximo a zero, demonstra que terá pouco ou nenhuma influência.
+Esses nós são organizados em camadas, onde a primeira camada é a camada de entrada, Input Layer, é nessa que os dados são introduzidos na rede, após há as camadas ocultas, 
+Hidden Layers, são nelas que a maior parte do aprendizado ocorre, redes com múltiplas camadas são as \textit{Deep Learning}, onde cada camada aprender a detectar características específicas dos dados, 
+e por fim há a camada de saída, Output Layer, que é onde o resultado final é produzido.
+
+\subsection{Compressão de Modelos}
+(Livro Deep Learning) Com o crescimento da \textit{Deep Learning}, os modelos de \textit{IA} cresceram em tamanho ao longo dos anos, sobreando a cada 2,4 anos, 
+uma vez que os (Artigo Deep Compression) modelos de redes neurais atuais são de alta performance são treinados para serem os mais precisos possível, sendo modelos matemáticos com uma grande quantidade de parâmetros que ocupam muito armazenamento, 
+sendo principalmente um problema para dispositivos com capacidade limitada que necessitam de um grande número de operações de pontos flutuantes (FLOPS), sendo assim necessitam de muito tempo para processar todas as entradas e obter uma resposta.
+
+Portanto, a compressão de modelos é um campo de estudo e conjunto de técnicas que tentam amenizar esses problemas de complexidade computacional, minimizando seu tamanho e/ou quantidade de cálculos com o intuito de manter uma acurácia satisfatória.
+As redes neurais possuem uma alta redundância de parâmetros, assim a compressão de modelos tem como obejtivo remover pessos que possuem baixa contribuição ao resultado final.
+Há 4 principais formas de compressão.
+\begin{itemize}
+    \item \textbf{Quantização (Quantization):} Técnica de compressão de modelo que reduz o números de bits para representar cada peso no modelo, ao invés dos parâmetros serem armazenados em pontos flutuantes de 32bits, a quantização mapeia esses valores e passa para uma menor precisão, como 16bits ou até 8bits, assim o modelo já reduz automaticamente e as operações com números inteiros, por exemplo, são mais simples do que com pontos flutuantes.
+    \item \textbf{Destilação de Conhecimento (Knowledge Distillation):} Metodologia de treinamento, no qual utiliza de um modelo grande de alta performasse já treinado, um modelo “professor” e então há um modelo de arquitetura menor e mais eficiente, o “aluno”.   Durante o treinamento, o modelo “aluno” aprende a minimizar uma função de custo, que uma parte tenta acertar rótulos verdadeiros dos dados e outras tenta imitar a distribuição de probabilidade de saída do modelo “professor”, assim têm-se um modelo “aluno”  compacto que  alcança uma precisão maior do que se tivesse sido treinada do zero.
+    \item \textbf{Fatoração de Matrizes (Matrix Factorization):} Matrizes de pesos de uma camada que pode ser muito grande é decomposta em duas ou mais matrizes menores, e o resultado dessa matrizes menores se aproxima da matriz original durante a inferência, que assim exigem um menor custo computacional que a matriz original.
+    \item \textbf{Poda Neural (Neural Pruning):} A poda é o processo de remoção de pesos ou até nós inteiros que não impactam ou impactam pouco para o resultado final do modelo. 
+    \includegraphics{03_capitulo/imagepodageral.png}
+    Há diversas técnicas de poda, a mais simples e intuitiva é a poda por magnitude, em que os pesos que possuem os resultados finais, após o treinamento inicial,  mais próximos a zero são considerados pouco influentes no resultado final do treinamento, é definida um limite de poda, onde se decide podar qualquer peso cujo a magnitude seja menor que 0.1, por exemplo, pois ao final, a contribuição deles para o cálculo final será muito baixa, criando redes esparsas. 
+    Após todo esses processo, há um ajuste fino com um retreinamento para recuperar um pouco do desempenho perdido, pois assim permite que os pesos restantes reajustem e compensem as conexões que foram podadas.
+    Por se zerar muitos pesos, o modelo pode ser armazenado em formatos de matrizes esparsas, armazenando apenas os valores difentes de zero e suas posições, tendo uma redução no tamanho do modelo.
+    \includegraphics{03_capitulo/imagepodamagnitude.png}
+
+    Há dois tipos de poda neural, a poda não estruturada e a poda estruturada. A poda não estruturada remove  pesos em redes neurais, resultando em uma estrutura escassa, tem uma alta compreensão de avaliação, mas precisam de hardwares específicos, já a poda estruturada remove filtros inteiros em redes neurais e alcança uma aceleração real e compreensão com hardwares padrões.
+
+    Através da poda estruturada o número de operações matemáticas durante a inferência é diretamente reduzido, com isso, a resposta tende a ficar mais rápida e com menor consumo de energia.
+\end{itemize}

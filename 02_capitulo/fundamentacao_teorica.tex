@@ -1,0 +1,23 @@
+
+\chapter{Trabalhos Relacionados}
+
+[TO DO]
+
+%1. Fazer revisão do trabalho
+%O que foi pesquisado (objetivo)?
+%Quais os resultados alcançados?
+%Como os resultados foram obtidos?
+
+%2. Pesquisar outros trabalhos relacionados usando as palavras-chaves
+
+
+%3.
+
+\textbf{Designing Energy-Efficient Convolutional Neural Networks using Energy-Aware Pruning}
+
+O objetivo do artigo foi criar um algortimo de poda para CNNs, sendo o foco minimizar o consumo real de energia, com a menor perda de acurácia possível, considerando principalmente o custo computacional e o de acesso a memória em dispositivos periféricos como Smartphones.
+
+Desenvolve um método de poda camada por camada, que as camadas com maiores gastos de energia são as primeiras a serem podadas. Ordena as camadas, através de um Framework, com maior gasto, onde separam o custo computacional(Operações MAC) e de acesso a memória. Em cada camada, os pesos são removidos, alguns são restaurados para minimizar o erro no mapa de características de saída e, por fim, os pesos restantes são ajustados localmente com uma solução de mínimos quadrados. Após todas as camadas serem podadas, a rede inteira passa por um ajuste fino global usando back-propagation.
+
+Conseguiu reduzir o consumo da rede AlexNet em 3.7x, da GoogLeNet em 1.6x, com perda de acurácia inferior a 1\%.
+Demonstrou que as camadas convulacionais(CONV) são as que mais gastam energia, pois há um grande acesso a memória. Foi demonstrado que reduzir o número de classes diminui o seu tamanho, mas tem um impacto limitado na redução de consumo de energia, ja que as camadas CONV não podem ser retiradas.
