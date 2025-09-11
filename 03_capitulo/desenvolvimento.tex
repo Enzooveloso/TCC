@@ -4,7 +4,7 @@
 
 \section{Descrição do Problema}
 \subsection{Redes Neurais Artificiais}
-A rede neural artificial é um modelo computacional baseado na estrutura de um cérebro humano, pois tenta imitar a forma de como os neurônios se conectam e processam os pulsos eletromagnéticos em nosso cérebro para aprender a partir de dados, 
+A rede neural artificial é um modelo computacional baseado na estrutura de um cérebro humano, pois tenta imitar a forma de como os neurônios se conectam e processam sinais eletroquímicos em nosso cérebro para aprender a partir de dados, 
 identificando padrões e tomando decisões. Todo esse processo ocorre através do perceptron multicamdas (MLP), que é um modelo de deep learning que possui funções matemáticas que mapeiam um conjunto de valore de entrada para valores de saída.
 Em uma rede neural, por exemplo, milhões de imagens de um objeto são processadas para que a rede possa aprender, através de características visuais que definem aquele objeto para assim ser reconhecido posteriormente.
 
@@ -15,31 +15,32 @@ onde o nó multiplica cada valor de entrada por um PESO e soma todos os resultad
 em que o resultado da soma da etapa anterior é passado por uma função de ativação, em que decide se um nó deve ser ATIVADO  e qual o nível de intensidade da saída.
 
 % Acho que há explicação das operações matemáticas no artigo 2 que estudei
-Para a conexão entre os nós e as camadas, há FIOS que ligam uns aos outros. Cada conexão tem um PESO associado, esse peso é o que determina a importância daquela conexão. 
+Para a conexão entre os nós e as camadas, há ARESTAS que ligam uns aos outros. Cada conexão tem um PESO associado, esse peso é o que determina a importância daquela conexão. 
 Um peso alto significa que aquela conexão é muito importante para o próximo neurônio, já um peso próximo a zero, demonstra que terá pouco ou nenhuma influência.
 Esses nós são organizados em camadas, onde a primeira camada é a camada de entrada, Input Layer, é nessa que os dados são introduzidos na rede, após há as camadas ocultas, 
 Hidden Layers, são nelas que a maior parte do aprendizado ocorre, redes com múltiplas camadas são as \textit{Deep Learning}, onde cada camada aprender a detectar características específicas dos dados, 
 e por fim há a camada de saída, Output Layer, que é onde o resultado final é produzido.
 
 \subsection{Compressão de Modelos}
-(Livro Deep Learning) Com o crescimento da \textit{Deep Learning}, os modelos de \textit{IA} cresceram em tamanho ao longo dos anos, sobreando a cada 2,4 anos, 
+(Livro Deep Learning) Com o crescimento da \textit{Deep Learning}, os modelos de \textit{IA} cresceram em tamanho ao longo dos anos, dobrando a cada 2,4 anos, 
 uma vez que os (Artigo Deep Compression) modelos de redes neurais atuais são de alta performance são treinados para serem os mais precisos possível, sendo modelos matemáticos com uma grande quantidade de parâmetros que ocupam muito armazenamento, 
-sendo principalmente um problema para dispositivos com capacidade limitada de armazenamento e processamento, que necessitam de um grande número de operações de pontos flutuantes (FLOPS), sendo assim necessitam de muito tempo para processar todas as entradas e obter uma resposta.
+sendo principalmente um problema para dispositivos com capacidade limitada de armazenamento e processamento, onde a execução desses modelos necessitam de um grande número de operações de pontos flutuantes (FLOPS), sendo assim necessitam de muito tempo para processar todas as entradas e obter uma resposta.
 
 Portanto, a compressão de modelos é um campo de estudo e conjunto de técnicas que tentam amenizar esses problemas de complexidade computacional, minimizando seu tamanho e/ou quantidade de cálculos com o intuito de manter uma acurácia satisfatória.
-As redes neurais possuem uma alta redundância de parâmetros, assim a compressão de modelos tem como obejtivo remover pessos que possuem baixa contribuição ao resultado final.
+As redes neurais possuem uma alta redundância de parâmetros, assim a compressão de modelos tem como obejtivo remover pesos que possuem baixa contribuição ao resultado final.
 Há 4 principais formas de compressão.
 \begin{itemize}
     \item \textbf{Quantização (Quantization):} Técnica de compressão de modelo que reduz o números de bits para representar cada peso no modelo, ao invés dos parâmetros serem armazenados em pontos flutuantes de 32bits, a quantização mapeia esses valores e passa para uma menor precisão, como 16bits ou até 8bits, assim o modelo já reduz automaticamente e as operações com números inteiros, por exemplo, são mais simples do que com pontos flutuantes.
     \item \textbf{Destilação de Conhecimento (Knowledge Distillation):} Metodologia de treinamento, no qual utiliza de um modelo grande de alta performasse já treinado, um modelo “professor” e então há um modelo de arquitetura menor e mais eficiente, o “aluno”.   Durante o treinamento, o modelo “aluno” aprende a minimizar uma função de custo, que uma parte tenta acertar rótulos verdadeiros dos dados e outras tenta imitar a distribuição de probabilidade de saída do modelo “professor”, assim têm-se um modelo “aluno”  compacto que  alcança uma precisão maior do que se tivesse sido treinada do zero.
     \item \textbf{Fatoração de Matrizes (Matrix Factorization):} Matrizes de pesos de uma camada que pode ser muito grande é decomposta em duas ou mais matrizes menores, e o resultado dessa matrizes menores se aproxima da matriz original durante a inferência, que assim exigem um menor custo computacional que a matriz original.
     \item \textbf{Poda Neural (Neural Pruning):} A poda é o processo de remoção de pesos ou até nós inteiros que não impactam ou impactam pouco para o resultado final do modelo. 
-    
+    %figura do artigo Learning both Weights and Connections for Efficient Neural Networks
     \includegraphics{03_capitulo/imagepoda.png}
     
     Há diversas técnicas de poda, a mais simples e intuitiva é a poda por magnitude, em que os pesos que possuem os resultados finais, após o treinamento inicial,  mais próximos a zero são considerados pouco influentes no resultado final do treinamento, é definida um limite de poda, onde se decide podar qualquer peso cujo a magnitude seja menor que 0.1, por exemplo, pois ao final, a contribuição deles para o cálculo final será muito baixa, criando redes esparsas. 
     Após todo esses processo, há um ajuste fino com um retreinamento para recuperar um pouco do desempenho perdido, pois assim permite que os pesos restantes reajustem e compensem as conexões que foram podadas.
     Por se zerar muitos pesos, o modelo pode ser armazenado em formatos de matrizes esparsas, armazenando apenas os valores difentes de zero e suas posições, tendo uma redução no tamanho do modelo.
+    %figura do artigo 
     \includegraphics{03_capitulo/imagepodamagnitude.png}
 
     Há dois tipos de poda neural, a poda não estruturada e a poda estruturada. A poda não estruturada remove  pesos em redes neurais, resultando em uma estrutura escassa, tem uma alta compreensão de avaliação, mas precisam de hardwares específicos, já a poda estruturada remove filtros inteiros em redes neurais e alcança uma aceleração real e compreensão com hardwares padrões.
@@ -49,10 +50,42 @@ Há 4 principais formas de compressão.
 
 
 \subsection{Consumo de energia}
-Com o avanço de técnicas e de hardware para o treinamento de redes neurais, com o intuito de atingir resultados mais eficientes, demanda um consumo de energia considerável(Artigo Energy and Policy Considerations for Deep Learning in NLP),
-assim, uma grande emissão de carbono na atmosfera, sendo que o treinamento de um modelo de um transformer com busca de arquitetura neural emite cerca de 626.255 lbs de CO2, enquanto um carro ao longo de toda a sua vida útil emite cerca de 126.000 lbs, certa de 4.9 vezes menos.
+Com o avanço de técnicas e de hardware para o treinamento de redes neurais, com o intuito de atingir resultados mais eficientes, demanda um consumo de energia considerável (Artigo Energy and Policy Considerations for Deep Learning in NLP),
+assim, uma grande emissão de carbono na atmosfera, sendo que o treinamento de um modelo de um transformer com busca de arquitetura neural emite cerca de 626.155 lbs de CO2, enquanto um carro ao longo de toda a sua vida útil emite cerca de 126.000 lbs, certa de 4.9 vezes menos.
 Todo esse consumo de energia se deve a duas etapas do ciclo de um modelo, o treinamento e a inferência.
 
-No processo de treinamento, o modelo é alimentado com um grande volume de dados que são ajustados em um processo de tentativa e erro(back propagation), requerem hardwares especializados com GPUs ou TPUs, com milhares de clusters de processamento.
+No processo de treinamento, o modelo é alimentado com um grande volume de dados que são ajustados em um processo de tentativa e erro (back propagation), requerem hardwares especializados com GPUs ou TPUs, organizados em clusters com centenas ou milhasres de processadores.
 
 No processo de inferência, que é o processo utilizar esse modelo ja treinado para para fazer requisições e obter respostas, uma resposta que o modelo dá, gasta pouca energia, mas olhando para um contexto de larga escala de uso em que as IAs generativas estão inseridas, o custo energético total é significativo.
+
+\section{Treinamento de um modelo até a poda por magnitude}
+\subsection{Treinamento de Redes Neurais Multicamadas}
+
+Uma rede neural multicamadas é formada por 1 camada de entrada, diversas camadas ocultas e 1 camada de saída, onde cada camada é formada por diversos neurônios(nós).
+\includegraphics[scale=0.45]{03_capitulo/imageArquiteturaRedeNeural.png}
+
+Os nós da primeira camada recebem os dados que serão treinados, seguindo um exemplo de uma rede neural que identifica objetos, essa imagem sendo 28px x 28px, terá 784 nós na camada de entrada, onde cada nó receberá um valor do pixel da imagem, valor esse referente a intensidade do pixel, a uma característica do dado que está sendo analisado.
+
+\includegraphics[scale=0.8]{03_capitulo/pixel-nos.png}
+
+A conexão entre os nós de uma camada até a outra é feita por arestas, onde cada aresta possui um peso associado.
+Cada nó de uma camada está conectada a todos os nós da próxima camada, cada uma dessas conexões possuem seus próprios pesos com valores aleatórios iniciais, que serão ajustados durante o treinamento.
+Há um bias associado a cada nó, que é um valor adicional somado ao resultado da soma ponderada, que ajuda o modelo a se ajustar melhor aos dados, é ele que informa qual alta a soma ponderada precisa ser para o neurônio ativar.
+Um nó da camada oculta, por exemplo, recebe todas as entradas dos nós da camada anterior, multiplica cada entrada pelo peso associado a aquela conexão, soma todos os resultados e soma o bias daquele nó, e então passa esse resultado por uma função de ativação, que decide se aquele nó será ativado ou não, e qual a intensidade da saída daquele nó.
+A ativação ocorre em 3 etapas.
+\begin{itemize}
+    \item O nó pega o valor de ativação da camada anterior e multiplica pelo peso que une ele ao nó, faz isso com todos os nós que chegam até ele e por fim, soma tudo. O peso atua para controlar a importância, no qual um alto peso amplifica o sinal de entrada, um baixo ou negativo, diminui.
+    \item Após a soma ponderada, o Bias é adicionado, é um valor que funciona como um auxilia, seja positivo ou negativo, para que o neurônio ative, define quão alta a soma ponderada precisa ser para o neurônio ativar.
+    \item O resultado (soma ponderada + bias) é passado por uma função de ativação, função que produz a saída final do neurônio. Esse resultado é então passado para os nós da próxima camada.
+\end{itemize}
+\includegraphics[scale=0.55]{03_capitulo/imageMatrizes_sigmoid.png}
+
+A função de ativação mais comum é a ReLU, que retorna 0 para qualquer valor negativo e retorna o próprio valor para qualquer valor positivo, assim introduz uma não linearidade no modelo, permitindo que ele aprenda padrões complexos.
+
+Ativações em uma camada(Hn), determinam ativações na camada seguinte(Hn+1)
+De acordo com o que é inserido, que causa ativação, causa um padrão de ativação específico na camada seguinte, que vai a seguinte e (Hn…)… que por fim produz o resultado final. De camada em camada as ativações vão criando um padrão cada vez mais complexo e abstrato. 
+Cada camada aprende a reconhecer padrões cada vez mais sofisticados baseados nos padrões da camada anterior.
+
+Se o modelo busca identificar números escritos a mão, na camada de saída, cada nó representará um número de 0 a 9, e o nó que tiver a maior ativação será o número identificado.
+\subsection{Poda por magnitude}
+
