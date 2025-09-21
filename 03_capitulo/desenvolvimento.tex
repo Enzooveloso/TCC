@@ -88,4 +88,63 @@ Cada camada aprende a reconhecer padrões cada vez mais sofisticados baseados no
 
 Se o modelo busca identificar números escritos a mão, na camada de saída, cada nó representará um número de 0 a 9, e o nó que tiver a maior ativação será o número identificado.
 \subsection{Poda por magnitude}
+Remove conexões que não impactam ou impactam pouco para o resultado final do modelo. Assim, diversos valores na matriz de pesos são zerados, ficando mais facil de armazenar e mais rápido de processar.
+
+\includegraphics[scale=0.5]{03_capitulo/imagepruning.png}
+
+%Quando sua matriz esta com zeros, não quer dizer que agora você tem espaço ou irá ser mais rápido, porque ocupam espaços semelhantes e tempo a números não zeros.
+%Pois quando uma GPU processa uma multiplicação de matriz, ela ainda faz a multiplicação com zeros, portanto é necessário de um algoritmo específico para multiplicação de matrizes esparsas, no qual ignoram entradas iguais a zero, quanto mais zeros tiver, mais rápido é a multiplicação.
+
+%Em uma poda estruturada, há a remoção de conexões da rede
+
+O moldeo é treinado com todas as conexões até que atinja a máxima precisão possível, dando foco apenas para a performance.
+Assim, após o treinamento, o algoritmo de poda por magnitude inspeciona o valor fianl de cada peso na rede e os valores muito próximos de zerão são podados, por serem considerados menos importântes para o resultado final.
+Define uma taxa de esparsidade( porcentagem de pesos que serão podados)
+Essa poda faz com que haja perda na acurácia do modelo, então há um ajuste fino com um retreinamento para recuperar um pouco do desempenho perdido, pois assim permite que os pesos restantes reajustem e compensem as conexões que foram podadas.
+
+Na poda estruturada, há a remoção de pesos em blocos inteiros , remove neurônios inteiros, assim cria matrizes menores, mas ainda densas, ficando mais fácil de ocorrer a multiplicação no hardware
+
+\textbf{Esparsidade Estruturada}: Impoe uma regra mais organizada, não remove pesos aleatoriamente, o algortimos de poda é forçado a cada pequeno bloco de 4 pesos, 2 deles devem ser zerados. Assim, como o hardware sabe que sempre haverá apenas 2 valores a cada bloco de 4, ele comprime a matriz pela metade, para saber onde estava os valores não nulos, ele armazena pequenos índices
+
+%Explições pedidas por Marcelo
+
+%O que é Aprendizado Profundo?
+O Aprendizado Profundo Deep Learning é um campo especializado de aprendizado máquina, onde sua principal caracterítica e diferenciação de outros campos de aprendizado máquina é o uso de redes neurais artificiais com múltiplas camadas, assim é possível aprender e extrair informações complexas por meio de um grande volume de dados
+%Quais são os elementos de uma Rede Neural Profunda (neurônio, camadas ocultas e saída)
+Uma rede neural profunda é composta por X elementos principais.
+\begin{itemize}
+    \item Nó(neurônio): É uma unidade computacional em que armazena e calcula uma soma ponderada das entradas mais um bias e passa o resultado através de uma função de ativação, produzindo uma saída.
+    \item Camada de Entrada: É onde todo o processo é iniciado, é nela que os dados são introduzidos na rede. O número de nós nessa camada é o número de características dos dados de entrada.
+    \item Camadas Ocultas: São camadas intermediárias  entre a entrada e a saída, cada nó em uma camada oculta está conectado a todos os nós da camada anterior e da camada seguinte. Nas camadas ocultas é onde ocorre a maior parte de todo processamento e aprendizado, a saída de uma camada oculta é utilizada como entrada para a próxima, a cada camada oculta, a rede aprende a detectar características mais complexas  e abstratas a respeito dos dados de entrada. Camadas iniciais ocultas aprendem características simples, em que cada camada seguinte utiliza as informações da camada anterior para aprender características mais complexas.
+    \item Camada de Saída: Camada final da rede, é nela que o resultado final é produzido. A estrutura da camada de saída depende da tarefa, podendo ser de regressão, que prevê um valor contínuo, possuindo um nó com uma função de ativação linear, pode ser de classificação binária, com um único neurônio que expressa resultados binários, sim ou não. Há também a classificação multiclasse, que possui um nó para cada classe possível, e a saída com maior valor de ativação é o resultado final.
+\end{itemize}
+%O que é e para que serve o Gradiente de uma rede neural?
+
+%O que é e para que serve o Retropropagação (Backpropagation)?
+
+%O que é e para que serve os Hiperparâmetros?
+
+%Quais são as principais métricas para avaliar o desempenho de um modelo de IA generativa?
+
+%O que é e para que serve o bias em uma rede neural?
+
+%O que é e para que serve a função de ativação de uma rede neural?
+
+%Descreve o passo-a-passo como uma rede neural é treinada?
+
+%Explique passo-a-passo como ocorre a estratégia de poda (pruning).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
