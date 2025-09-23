@@ -104,11 +104,12 @@ Essa poda faz com que haja perda na acurácia do modelo, então há um ajuste fi
 
 Na poda estruturada, há a remoção de pesos em blocos inteiros , remove neurônios inteiros, assim cria matrizes menores, mas ainda densas, ficando mais fácil de ocorrer a multiplicação no hardware
 
-\textbf{Esparsidade Estruturada}: Impoe uma regra mais organizada, não remove pesos aleatoriamente, o algortimos de poda é forçado a cada pequeno bloco de 4 pesos, 2 deles devem ser zerados. Assim, como o hardware sabe que sempre haverá apenas 2 valores a cada bloco de 4, ele comprime a matriz pela metade, para saber onde estava os valores não nulos, ele armazena pequenos índices
+\textbf{Esparsidade Estruturada}: Impoe uma regra mais organizada, não remove pesos aleatoriamente, o algortimos de poda é forçado a cada pequeno bloco de 4 pesos, 2 deles devem ser zerados. Assim, como o hardware sabe que sempre haverá apenas 2 valores a cada bloco de 4, ele comprime a matriz pela metade, para saber onde estava os valores não nulos, ele armazena pequenos índices.
 
 %Explições pedidas por Marcelo
 
 %O que é Aprendizado Profundo?
+\subsection{Aprendizado Profundo (Deep Learning)}
 O Aprendizado Profundo Deep Learning é um campo especializado de aprendizado máquina, onde sua principal caracterítica e diferenciação de outros campos de aprendizado máquina é o uso de redes neurais artificiais com múltiplas camadas, assim é possível aprender e extrair informações complexas por meio de um grande volume de dados
 %Quais são os elementos de uma Rede Neural Profunda (neurônio, camadas ocultas e saída)
 Uma rede neural profunda é composta por X elementos principais.
@@ -119,9 +120,17 @@ Uma rede neural profunda é composta por X elementos principais.
     \item Camada de Saída: Camada final da rede, é nela que o resultado final é produzido. A estrutura da camada de saída depende da tarefa, podendo ser de regressão, que prevê um valor contínuo, possuindo um nó com uma função de ativação linear, pode ser de classificação binária, com um único neurônio que expressa resultados binários, sim ou não. Há também a classificação multiclasse, que possui um nó para cada classe possível, e a saída com maior valor de ativação é o resultado final.
 \end{itemize}
 %O que é e para que serve o Gradiente de uma rede neural?
+\subsection{Gradiente}
+Quando se fala de gradiente em redes neurais, está se referindo ao vetor de derivadas parciais da função de perda em relação aos pesos da rede neural, é ele que permite a minimização da função de perda através do algoritmo de descida do gradiente, em que é um método dede primeira ordem que utiliza informações do gradiente para atualizar os parâmetros da rede.
+O gradiente é um vetor de derivadas para uma função que recebe um vetor de variáveis de entrada, cada componente no vetor de gradiente é uma derivada parcial, em que é calculada assumindo que todas as outras variáveis da função são mantidas contantes, assim o gradiente é capaz de capturar a inclinação da função e assim permite prever o efeito e dar.
 
+Gradiente está extremamente ligada a derivada, que é uma taxa de mudança de uma função em um ponto específico, ou seja, a derivada informa a linha tangente em um ponto, e essa inclinaçãoo pode ser usada para estimar o valor da função em um próximo ponto, em que o valor da derivada indica quanto a função esta mudando, sua magnitude, e a direção, o sinal. Se a derivada é positiva, a função está aumentando, se é negativa, a função está diminuindo.
 %O que é e para que serve o Retropropagação (Backpropagation)?
-
+%Falar sobre Forward pass depois
+\subsection{Backpropagation}
+É um algoritmo utilizado para que as redes neurais aprendam, pois é ele que possibilita que a rede ajuste seus parâmetros internos (pesos e bias) com o intuito de calcular a contribuição de cada parâmetro da rede para o erro final de previsão, melhorando a performance do modelo.
+Ao fim do treinamento, com o erro ja calculado, o algoritmo de backpropagation faz o um fluxo invertido do treinamento, indo da camada de saída até a camada de entrada, em que o erro calculado na camada de saída é propagado para as camadas anteriores da rede, assim os pesos e bias são ajustados para que na próxima alteração o erro seja menor, todo esse processo de identificar o erro e ajusta-lo é feito por meio do gradiente.
+O algoritmo de backpropagation é capaz de saber como cada peso individual se correlaciona com o erro, por meio de calcular a derivada parcial do erro em relação a cada peso, para isso o algoritmo usa a regra da cadeia multivariada, em que decompõe o cácllculo da derivada em derivadas intermediárias, exemplo: derivada do erro em relação a saída prevista, após as derivadas parciais calculadas para todos os pesos, esses valores são usados para otimizar a rede, ajustando o peso na direção oposta ao gradiente, se o sinal da derivada de um peso for positiva, logo o peso deve ser diminuído para minimizar o erro, pois assim há uma menor função de perda.
 %O que é e para que serve os Hiperparâmetros?
 
 %Quais são as principais métricas para avaliar o desempenho de um modelo de IA generativa?
