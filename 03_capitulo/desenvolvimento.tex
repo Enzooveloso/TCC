@@ -141,7 +141,19 @@ Há duas principais características de hiperparâmetros.
 \end{itemize}
 
 %Quais são as principais métricas para avaliar o desempenho de um modelo de IA generativa?
-
+Ao analisar o desempenho de um modelo, deve-se levar em consideração o objetivo do modelo, pois em modelos de classificação pode-se apenas meedir a acurácia, mas em modelos generativos, é necessario analisar métricas mais complexas.
+Para modelos generativos de imagens há duas principais métricas.
+\begin{itemize}
+    \item \textbf{Inception Score (IS):} Utiliza um modelo de classificação de imagens pré-treinado (Inception v3) para avaliar a qualidade das imagens geradas, para cada imagem gerada o InceptionV3 deve ser capaz de classificar com uma alta probabilidade, sendo que no modelo tem de haver uma diversidade classes, dessa froma o IS mais alto demonstra que as imagens que estão sendo criadas são de alta qualidade e variadas.
+    \item \textbf{Fréchet Inception Distance (FID):} Melhoria do IS, ele também utiliza o InceptionV3, mas aqui ele compara a distribuição estatística das características das imagens geradas com a distribuição das imagens reais. Inicialmente ele passa um conjunto de imagens reais e um conjunto de imagens geradas pela rede InceptionV3 e extrai quais são as ativações de uma camada profunda, ativações essas que demonstrem características complexas da imagem, após isso, Ele modela essas ativações como distribuições Gaussianas multivariadas e calcula a distância  entre a distribuição das imagens reais e a das imagens geradas.Um FID baixo é melhor pois demonstra que as imagens geradas são mais semelhantes as reais em termos de características, qualidade e diversidade.
+\end{itemize}
+Para modelos generativos de texto há diversas dificuldades para analisar o desempenho do modelo, pois envolve questões gramaticais, coerência, relevância, fluidez, criatividade, entre outros. Sendo assim, as métricas são comparando o texto com um ou mais textos de referência escrito por humanos.
+\begin{itemize}
+    \item \textbf{BLEU (Bilingual Evaluation Understudy):} Mede a sobreposição  de sequências de palavras entre o texto gerado e o texto referência, calcula a precisão de n-gramas, que são sequências contíguas de n palavras, assim um BLEU alto indica que o texto gerado é semelhante ao texto de referência, para que não haja sequências muito curtas, mas precisas que obteriam uma pontuação alta, há uma penalidade por brevidade.
+    \item \textbf{ROUGE (Recall-Oriented Understudy for Gisting Evaluation):} Mede quantos n-gramas dos textos referências aparecem no texto gerado, sendo útil principalmente para sumarização de texto.
+    \item \textbf{Perplexity:} É uma medida intrínseca, que mede a incerteza do modelo emprever a próxima palavra em uma sequência, sendo uma derivada da probabilidade que o modelo atribui a uma sequência de palavras, im alto valor para o texto teste resultada em perplexidade baixa, logo o modelo é bom em prever a próxima palavra.
+\end{itemize}
+Fica nítido que todas essas formas de avaliar a qualidade de um modelo generativo são importantes, mas ainda há uma grande dificuldade em realmente ter uma avaliação precisa, assim a avaliação humana ainda é considerada muito importante para julga a qualidade do connteúdo gerado.
 %O que é e para que serve o bias em uma rede neural?
 
 %O que é e para que serve a função de ativação de uma rede neural?
