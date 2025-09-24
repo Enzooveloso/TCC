@@ -163,8 +163,17 @@ A principal função do bias é deslocar a função de ativação para que o mod
 O bias é um parâmetro aprendível, assim, o próprio modelo descobre quais são os melhores valores durante o treinamento. Inicialmente eles são inicializados como zero ou valores muito baixos, durante o treinamento após o forward pass, o backpropagation calcula o gradiente da função de erro para os pesos, mas também para cada bias, indicando quanto o aquele bias contribui para o erro total. Por meio de um otimizador, como o gradiente descendente, atualiza o bias para minimizar o erro, sendo: NovoBias = AntigoBias - (taxa de aprendizado * gradiente do bias). A cada iteração o bias é ajustado, fazendo com que o modelo se adapte melhor aos dados.
 
 %O que é e para que serve a função de ativação de uma rede neural?
-
-%Descreve o passo-a-passo como uma rede neural é treinada?
+\subsection{Função de Ativação}
+A função de ativação é como um filtro, em que determina a saída do neurônio com base na entrada recebida, sendo uma função matemática aplicada a cada nó da rede neural, em que atua na soma ponderada das entradas de um neurônio após a adição do bias.
+Com a função de ativação, o modelo pode aprender e representar padrões complexos nos dados, introduzindo não linearidade no modelo, em que permite que ao combinar multicamadas, aprenda e representa relações complexas e curvas, conseguindo resolver problemas complexas que não podem ser resolvidos com uma simples função linear, pois com a linearidade, cada nó estaria realizando uma transformação linear , assim uma sequência de nós resultaria em uma única transformação linear, seria como o modelo tivesse uma única camada.
+Assim, a função de ativação desempenha um papel necessário no treinamento e na capacidade preditiva da rede neural.
+Há diversas funções de ativação, cada uma com suas próprias características e aplicações.
+\begin{itemize}
+    \item \textbf{ReLU (Rectified Linear Unit):}
+    \item \textbf{Sigmoid:}
+    \item \textbf{Tanh (Tangente Hiperbólica):}
+    \item \textbf{Softmax:}
+\end{itemize}
 
 %Explique passo-a-passo como ocorre a estratégia de poda (pruning).
 
