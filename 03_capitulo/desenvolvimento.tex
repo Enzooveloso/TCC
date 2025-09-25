@@ -169,11 +169,10 @@ Com a função de ativação, o modelo pode aprender e representar padrões comp
 Assim, a função de ativação desempenha um papel necessário no treinamento e na capacidade preditiva da rede neural.
 Há diversas funções de ativação, cada uma com suas próprias características e aplicações.
 \begin{itemize}
-    \item \textbf{ReLU (Rectified Linear Unit):}
-    \item \textbf{Sigmoid:}
-    \item \textbf{Tanh (Tangente Hiperbólica):}
-    \item \textbf{Softmax:}
-\end{itemize}
+    \item \textbf{ReLU (Rectified Linear Unit):} Função de ativação mais utilizada em redes neurais, em que é uma linha reta com inclinação 1 para valores positivos e 0 para negativos, sendo computacionalmente muito eficiente e não havendo desaparecimento do gradiente, pois a inclinação é constante para entradas positivas e como os neurônios com entradas negativas são desativadas, a rede se torna esparsa e eficiente. Porém, pode sofrer com o problema de Dyinng ReLU, neurônio morto, em que se um neurônio recebe várias entradas negativas durante o treinamento, seu pedo fica ajustado em que sua entrada seja sempre negativa, assim ele nunca mais será reativado, parando de aprender.
+    \item \textbf{Sigmoid:} Função que mapeia qualquer valor real para um valor entre 0 e 1, sendo útil para problemas de classificação binária, já que uma saída entre 0 e 1 pode ser interpretada como uma probabilidade. Caiu em desuso pois quando há entradas muito altas ou muito baixas, a inclinação da curva é quase zero, assim o gradiente fica muito pequeno, fazendo com que o aprendizado seja muito lento ou até pare.
+    \item \textbf{Tanh (Tangente Hiperbólica):} É uma melhoria referente a Sigmoid, mapeia qualquer valor real para um valor entre -1 e 1, assim é centrada em zero, o que pode ajudar na convergência do modelo. Porém, assim como a Sigmoid, sofre com o problema do gradiente desaparecendo.
+    \item \textbf{Softmax:} A função Softmax difere das outras, pois ela não é usada em neurônios individuais nas camdas ocultas, mas sim aplicada a todos os neurônios na camada de saída, em que um vetor de números reaism saídas brutas da última camada, e os transforma em um vetor de probabilidade, onde cada valor está entre 0 e 1. Acaba sendo utilizada para problemas de classeficação multiclasse, onde cada nó na camada de saída representa uma classe diferente, e a saída do Softmax indica a probabilidade de cada classe.
 
 %Explique passo-a-passo como ocorre a estratégia de poda (pruning).
 
