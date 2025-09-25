@@ -191,18 +191,12 @@ Todo o treinamento de uma rede neural ocorre em um grande número de iterações
 \end{itemize}
 Todo o ciclo é repetido pelo número de épocas definido, o treinamento é interrompido se o modelo atingir uma precisão satisfatória ou se a função de perda não estiver mais diminuindo significativamente.
 
-
-
-
-
-
-
-
-
-
-
-
-
 %Explique passo-a-passo como ocorre a estratégia de poda (pruning).
-
-
+\subsection{Passo a passo da Poda}
+A poda tenta identificar e remover parâmetros desnecessários para criar um modelo menor e mais eficiente, sem sacrificar muito a precisão.
+\begin{itemize}
+    \item \textbf{Passo 1 (Definição de critérios e taxa de poda):} A partir de um modelo ja treinado e denso, atribui a importâncias dos parâmetros da rede, os valores finais dos pesos, que indica quais conexões são cruciais e quais não são. Dessa formadefine o critério de qual pesos são desnecessários, o mais comum é a poda por magnitude, onde os pesos com valores absolutos mais baixos são considerados menos importantes. Define também a taxa de poda, que é a porcentagem de pesos que serão removidos.
+    \item \textbf{Passo 2 (Identificação dos pesos a serem podados):} Com o critério e a taxa de poda definidos, o algoritmo inspeciona todos os pesos na rede e classifica-os com base em sua importância, selecionando os pesos que atendem ao critério de poda, por exemplo, os pesos com magnitudes mais baixas.
+    \item \textbf{Passo 3 (Execução da poda):} Com todos os pesos classificados e os que serão podados selecionados, o algoritmo procede para remover esses pesos da rede, em que os pesos selecionados são definidos como zero, efetivamente removendo essas conexões da rede. Assim a rede fica esparsa, com a matriz de pesos contendo muitos zeros, ficando danificadass as conexões entre os nós.
+    \item \textbf{Passo 4 (Ajuste fino com retreinamento):} Após a poda, o modelo perde precisão, perde desempenho, então ocorre um ajuste fino, que é um retreinamento do modelo podado, onde o modelo é treinado novamente com os dados de treinamento, mas com uma taxa de aprendizado menor, para que os pesos restantes possam se reajustar e compensar as conexões que foram podadas, recuperando parte do desempenho perdido, sendo que os pesos que foram zerados, continuam zerados, o retreinamento é nos pesos que sobraram, adaptando e compensando os pesos que foram zerados. A rede aprende a operar com a nova estrutura, com esse passo, a acurácia é recuperada.
+    \item \textbf{Passo 5 (Esculpir as camadas):} A poda é feita de forma iterativa, podando e fazendo o ajuste fino, repetindo isso várias vezes, assim com a poda pouco a pouco a rede se adapta melhor as mudanças do que retirar uma taxa muito alta de uma vez, resulta em uma perda de acurácia menor.
