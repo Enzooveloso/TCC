@@ -173,6 +173,35 @@ Há diversas funções de ativação, cada uma com suas próprias característic
     \item \textbf{Sigmoid:} Função que mapeia qualquer valor real para um valor entre 0 e 1, sendo útil para problemas de classificação binária, já que uma saída entre 0 e 1 pode ser interpretada como uma probabilidade. Caiu em desuso pois quando há entradas muito altas ou muito baixas, a inclinação da curva é quase zero, assim o gradiente fica muito pequeno, fazendo com que o aprendizado seja muito lento ou até pare.
     \item \textbf{Tanh (Tangente Hiperbólica):} É uma melhoria referente a Sigmoid, mapeia qualquer valor real para um valor entre -1 e 1, assim é centrada em zero, o que pode ajudar na convergência do modelo. Porém, assim como a Sigmoid, sofre com o problema do gradiente desaparecendo.
     \item \textbf{Softmax:} A função Softmax difere das outras, pois ela não é usada em neurônios individuais nas camdas ocultas, mas sim aplicada a todos os neurônios na camada de saída, em que um vetor de números reaism saídas brutas da última camada, e os transforma em um vetor de probabilidade, onde cada valor está entre 0 e 1. Acaba sendo utilizada para problemas de classeficação multiclasse, onde cada nó na camada de saída representa uma classe diferente, e a saída do Softmax indica a probabilidade de cada classe.
+\end{itemize}
+%Descreve o passo-a-passo como uma rede neural é treinada?
+\subsection{Passo a passo do treinamento de uma rede neural}
+Para um treinamento de uma rede neural do zero é necessário um grande conjunto de dados rotulados, ou seja, cada dado de entrada deve ter uma saída correta associada, para que o modelo possa aprender a partir desses exemplos.
+O conjunto deve ser dividido em três partes: conjunto de treinamento, conjunto de validação e conjunto de teste. O conjunto de treinamento é usado para ajustar os pesos e bias da rede, o conjunto de validação é usado para monitorar o desempenho do modelo durante o treinamento e ajustar hiperparâmetros, e o conjunto de teste é usado para avaliar de forma imparcial o desempenho final do modelo após o treinamento.
+Tendo também de haver uma definição da arquitetura da rede neural, sendo a quantidade de camadas, quantidade de nós em cada camada, função de ativação, podendo haver diferentes funções de ativaóes em diferentes camadas e definição dos hiperparâmetros, como taxa de aprendizado, tamanho do lote (batch size) e o número de épocas.
+Todo o treinamento de uma rede neural ocorre em um grande número de iterações, em que cada passagem completa pela rede é chamada de época (epoch) e em cada época, os dados são processados em pequenos lotes (batches).
+
+\begin{itemize}
+    \item \textbf{Passo 1 (Inicialização dos Parâmetros):} Antes de qualquer iteração, os pesos e bias da rede são inicializados com valores baixos e aleatórios, em que o bias são inicializados com zero. Dessa forma, qualquer simetria que possa ser gerada é quebrada, permite que cada nó aprenda pontos diferentes, pois se eles fossem inicializados com o mesmo valor, todos os neurônios aprenderiam as mesmas características dos dados.
+    \item \textbf{Passo 2 (Forward Pass):} Um lote dos dados de treinamento é inserido na camada de entrada, passando por todas as camadas ocultas, onde cada nó realiza a soma ponderada das entradas mais o bias e o resultado passa para a função de ativação, assim, a saída de uma camada se torna a entrada da próxima camada, até chegar na camada de saída, em que produz uma previsão.
+    \item \textbf{Passo 3 (Loss Calculation):} Nessa etapa a a previsão da rede emitida pela camada de saída é comparada com a saída correta, os rótulos verdadeiros, e então é calculada a função de perda, em que quantifica o erro da previsão da rede, dessa forma obtêm-se um valor numérico que indica o quão longe a previsão está do valor real.   
+    \item \textbf{Passo 4 (Backpropagation):} Com o erro calculado, o algoritmo de backpropagation é executado, ele iniciasse com o valor da perda que foi calculado e propaga esse erro de volta através da rede, indo da camada de saída até a camada de entrada, em que calcula o gradiente da função de perda em relação a cada peso e bias na rede, isso inidica a direção e a magnitude do erro, ou seja, quanto cada peso e bias contribui para o erro total, portanto sabe-se exatamente como ajustar cada peso e bias para reduzir o erro.
+    \item \textbf{Passo 5 (Atualização dos Parâmetros):} Com os gradientes calculados no passo anterior, um algoritmo de otimização, utiliza-os para atualizar todos os pesos e bias, sendo parametroNovo = parametroAntigo - (taxa de aprendizado * gradiente do parâmetro). Dessa forma corrige os parâmteros na direção oposta ao gradiente, assim reduzindo a função de perda. O que controla o tamanho desse ajuste é o hiperparâmetro da taxa de aprendizado.
+    \item \textbf{Passo 6 (Repetição):} Os passos 2 a 5 são repetidos para cada lote de dados no conjunto de treinamento, e esse processo é repetido por um número definido de épocas, ou seja, o modelo passa por todo o conjunto de treinamento várias vezes, ajustando os pesos e bias a cada iteração.
+\end{itemize}
+Todo o ciclo é repetido pelo número de épocas definido, o treinamento é interrompido se o modelo atingir uma precisão satisfatória ou se a função de perda não estiver mais diminuindo significativamente.
+
+
+
+
+
+
+
+
+
+
+
+
 
 %Explique passo-a-passo como ocorre a estratégia de poda (pruning).
 
