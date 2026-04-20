@@ -156,6 +156,9 @@
 \newcommand{\alterar}[2][]{\todo[linecolor=black,backgroundcolor=orange!25,bordercolor=red,#1]{\textbf{Alterar}: #2}}
 \newcommand{\adicionadomarcelo}[1]{\textcolor{green}{#1}}
 \newcommand{\removido}[1]{\textcolor{red}{\st{#1}}}
+% Comandos de marca{\c{c}}{\~a}o de revis{\~a}o (adicionados nesta revis{\~a}o)
+\newcommand{\mantido}[1]{#1}  % preservado integralmente: sem marca{\c{c}}{\~a}o visual
+\newcommand{\modificado}[1]{\textcolor{orange}{#1}}  % ajustes pontuais em texto do Enzo
 %\newcommand{\alteracao}[2][]{\todo[linecolor=orange,backgroundcolor=orange!25,bordercolor=orange,#1]{\textbf{Alteração}: #2}}
 %\newcommand{\informacao}[2][]{\todo[linecolor=green,backgroundcolor=green!25,bordercolor=green,#1]{\textbf{Informação}: #2}}
 \newcommand{\dica}[2][]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{\textbf{Dica}: #2}}
@@ -216,9 +219,10 @@
 
 \include{01_capitulo/introducao}
 \include{02_capitulo/fundamentacao_teorica}
-\include{03_capitulo/desenvolvimento}
-\include{04_capitulo/resultados}
-\include{05_capitulo/consideracoes}
+\include{03_capitulo/trabalhos_relacionados}
+\include{04_capitulo/metodologia}
+\include{05_capitulo/resultados}
+\include{06_capitulo/consideracoes}
 
 
 \bookmarksetup{startatroot}% 
@@ -227,105 +231,16 @@
 \postextual
 
 
-\bibliography{abntex2-modelo-references}
+\bibliography{referencias}
 %\bibliographystyle{abnt-num}
 %\bibliographystyle{plainnat}
 
 \chapter{Apêndice}
 
 \begin{apendicesenv}
+
 [TO DO]
 
-\cite{schaerf1999}
-
-\begin{figure}[h]
-\centering
-\caption{Complexidade computacional}
-\label{fig:complexidade_computacional}
-\includegraphics[width=0.5\textwidth]{02_capitulo/P_np_np-completo_np-hard.png}
-\\Fonte: Elaborado por \citeonline{wikipedia}
-\end{figure}
-
-% Trabalhos relacionados
-\begin{center}
-\tiny
-\begin{longtable}{|c|c|c|c|c|}
-\caption{Trabalhos Relacionados}
-\label{tab:trab_relacionados}\\
-\hline
-\rowcolor[HTML]{38761D}{\color[HTML]{FFFFFF} \textbf{\begin{tabular}[c]{@{}c@{}}Escolaridade / \\ Técnica de solução\end{tabular}}} &
-  {\color[HTML]{FFFFFF} \textbf{Inteira}} &
-  {\color[HTML]{FFFFFF} \textbf{Inteira Mista}} &
-  {\color[HTML]{FFFFFF} \textbf{Inteira Binaria}} &
-  {\color[HTML]{FFFFFF} \textbf{Metaheurística}} \\ \hline
-\endfirsthead
-%
-\multicolumn{5}{c}%
-{{\bfseries Table \thetable\ continued from previous page}} \\
-\hline
-\rowcolor[HTML]{38761D} {\color[HTML]{FFFFFF} \textbf{\begin{tabular}[c]{@{}c@{}}Escolaridade/\\ Tipo PL\end{tabular}}} &
-  {\color[HTML]{FFFFFF} \textbf{Inteira}} &
-  {\color[HTML]{FFFFFF} \textbf{Inteira Mista}} &
-  {\color[HTML]{FFFFFF} \textbf{Inteira Binaria}} &
-  {\color[HTML]{FFFFFF} \textbf{Metaheurística}} \\ \hline
-\endhead
-%
-\cellcolor[HTML]{D9EAD3}{\color[HTML]{274E13} } &
-  \citeonline{ALMEIDA_2022} &
-  \citeonline{ANAIS_RIBEIRO} &
-   &
-   \\ \cline{2-5} 
-\rowcolor[HTML]{FFFFFF} 
-\multirow{-2}{*}{\cellcolor[HTML]{D9EAD3}{\color[HTML]{274E13} \textbf{Graduação}}} &
-   &
-  \citeonline{NORTE_CIENTIFICO_IFRR} &
-   &
-   \\ \hline
-\cellcolor[HTML]{D9EAD3}{\color[HTML]{274E13} \textbf{\begin{tabular}[c]{@{}c@{}}Instituto\\ Federal\end{tabular}}} &
-  \citeonline{FREITAS_USBERTI_UNICAMP_2019} &
-  \citeonline{LUCIANO_FERNANDES} &
-   &
-  \citeonline{DANTAS_IFRN_2018} \\ \hline
-\cellcolor[HTML]{D9EAD3}{\color[HTML]{274E13} \textbf{\begin{tabular}[c]{@{}c@{}}Ensino Médio/\\ Fundamental\end{tabular}}} & 
-    \citeonline{BIANCA_ALMEIDA} &
-   &
-  \citeonline{SLONGO_2018} &
-   \\ \hline 
-\end{longtable}
-\text{Fonte: Elaboração própria.}
-\end{center}
-
-\begin{code}[h]
-\centering
-\caption{Exemplo de criação de variáveis}
-\begin{lstlisting}[language=Python]
-# =============  VARIAVEIS DE DECISAO  ===============
-aulaDH = {}
-aulaD = {}
-aulaC = {}
-
-for s in range(num_semestres): 
-    for m in materias.keys():
-        for d in dias:
-            aulaD[(s, m, d)] = model.addVar(vtype=GRB.BINARY)
-            aulaC[(s, m, d)] = model.addVar(vtype=GRB.BINARY)       
-            for h in horarios:
-                aulaDH[(s, m, d, h)] = model.addVar(vtype=GRB.BINARY)
-
-# =============  VARIAVEIS AUXILIARES  ===============
-
-P_h = model.addVar(vtype=GRB.CONTINUOUS)
-P_div = model.addVar(vtype=GRB.CONTINUOUS)
-P_c = model.addVar(vtype=GRB.CONTINUOUS)
-P_dc = model.addVar(vtype=GRB.CONTINUOUS)
-P_b = model.addVar(vtype=GRB.CONTINUOUS)
-P_pref = model.addVar(vtype=GRB.CONTINUOUS)
-\end{lstlisting}
-\small{Fonte: Elaboração própria} 
-\label{code:criar_variavel}
-\end{code}
-
-%\includepdf[scale=0.75, pages=1-18, pagecommand={\section*{Apêndice A - Questionário}}]{Questionario_TCC.pdf}
 \end{apendicesenv}
 
 \begin{comment}
