@@ -152,15 +152,14 @@
 % ---
 
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
-\usepackage{soul} % Highlighting and strikeout
+\usepackage{soul} 
 \newcommand{\alterar}[2][]{\todo[linecolor=black,backgroundcolor=orange!25,bordercolor=red,#1]{\textbf{Alterar}: #2}}
-\newcommand{\adicionadomarcelo}[1]{\textcolor{green}{#1}}
-\newcommand{\removido}[1]{\textcolor{red}{\st{#1}}}
-% Comandos de marca{\c{c}}{\~a}o de revis{\~a}o (adicionados nesta revis{\~a}o)
-\newcommand{\mantido}[1]{#1}  % preservado integralmente: sem marca{\c{c}}{\~a}o visual
-\newcommand{\modificado}[1]{\textcolor{orange}{#1}}  % ajustes pontuais em texto do Enzo
-%\newcommand{\alteracao}[2][]{\todo[linecolor=orange,backgroundcolor=orange!25,bordercolor=orange,#1]{\textbf{Alteração}: #2}}
-%\newcommand{\informacao}[2][]{\todo[linecolor=green,backgroundcolor=green!25,bordercolor=green,#1]{\textbf{Informação}: #2}}
+\newcommand{\adicionadomarcelo}[1]{#1}
+\newcommand{\removido}[1]{#1}
+
+\newcommand{\mantido}[1]{#1}
+\newcommand{\modificado}[1]{#1}
+
 \newcommand{\dica}[2][]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{\textbf{Dica}: #2}}
 
 \newcommand{\comentmargin}[2][]{\todo[linecolor=blue,backgroundcolor=green!25,bordercolor=green,#1]{#2}}
