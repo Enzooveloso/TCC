@@ -275,3 +275,7 @@ TSWLatexianTemp*
 
 # Makeindex log files
 *.lpz
+# Claude Code (ferramenta de produtividade, não faz parte do TCC)
+.claude/
+CLAUDE.md
+LEIA-ME-REVISAO.md
