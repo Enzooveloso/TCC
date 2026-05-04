@@ -35,7 +35,7 @@ Uma rede neural profunda é composta por unidades (nós) interconectadas, organi
 \caption{\adicionadomarcelo{Arquitetura típica de uma rede neural artificial com uma camada de entrada, duas camadas ocultas e uma camada de saída.}}
 \label{fig:arquitetura_rede_neural}
 \includegraphics[scale=0.45]{02_capitulo/imageArquiteturaRedeNeural.png}
-\\ \adicionadomarcelo{Fonte: \citeonline{NielsenNNDL2015}.}
+% \\ \adicionadomarcelo{Fonte: \citeonline{NielsenNNDL2015}.}
 \end{figure}
 
 \subsection{Bias em Redes Neurais}
@@ -58,12 +58,12 @@ A ativação de um neurônio ocorre em três etapas:
 \caption{\adicionadomarcelo{Representação matricial da propagação de um neurônio, da soma ponderada à função de ativação (Sigmoide).}}
 \label{fig:matrizes_sigmoid}
 \includegraphics[scale=0.55]{02_capitulo/imageMatrizes_sigmoid.png}
-\\ \adicionadomarcelo{Fonte: \citeonline{NielsenNNDL2015}.}
+% \\ \adicionadomarcelo{Fonte: \citeonline{NielsenNNDL2015}.}
 \end{figure}
 
 Há diversas funções de ativação, cada uma com suas próprias características e aplicações.
 \begin{itemize}
-    \item \textbf{ReLU (Rectified Linear Unit):} \modificado{Função de ativação mais utilizada em redes neurais modernas. É uma função linear por partes, com inclinação 1 para valores positivos e 0 para valores negativos \cite{Krizhevsky2012}. É computacionalmente muito eficiente e não sofre do problema do desaparecimento do gradiente para entradas positivas. Em contrapartida, pode sofrer do problema conhecido como \textit{Dying ReLU}, no qual neurônios cujas entradas se tornam persistentemente negativas deixam de ser ativados e param de aprender.}
+    \item \textbf{ReLU (Rectified Linear Unit):} \modificado{Função de ativação mais utilizada em redes neurais modernas, proposta para redes profundas por \citeonline{Nair2010} e popularizada por \citeonline{Krizhevsky2012}. É uma função linear por partes, com inclinação 1 para valores positivos e 0 para valores negativos. É computacionalmente muito eficiente e não sofre do problema do desaparecimento do gradiente para entradas positivas. Em contrapartida, pode sofrer do problema conhecido como \textit{Dying ReLU}, no qual neurônios cujas entradas se tornam persistentemente negativas deixam de ser ativados e param de aprender.}
     \item \textbf{Sigmoide:} \modificado{Função que mapeia qualquer valor real para o intervalo $(0,1)$, sendo útil em classificação binária, já que a saída pode ser interpretada como uma probabilidade. Caiu em desuso em camadas ocultas porque, para entradas com magnitude muito alta ou muito baixa, sua derivada se aproxima de zero, fenômeno conhecido como desaparecimento do gradiente.}
     \item \textbf{Tanh (Tangente Hiperbólica):} \modificado{Semelhante à Sigmoide, porém mapeando os valores para o intervalo $(-1,1)$, o que a torna centrada em zero e costuma favorecer a convergência. Também sofre do problema do desaparecimento do gradiente.}
     \item \textbf{Softmax:} \modificado{Diferentemente das demais, não é aplicada a neurônios individuais de camadas ocultas, mas sim ao conjunto dos neurônios da camada de saída em tarefas de classificação multiclasse. Transforma as saídas brutas da última camada em uma distribuição de probabilidades, com valores no intervalo $(0,1)$ que somam 1.}
@@ -111,7 +111,7 @@ Há diversas funções de ativação, cada uma com suas próprias característic
 \caption{\adicionadomarcelo{Mapeamento entre pixels de uma imagem 28$\times$28 e os nós da camada de entrada de uma rede neural.}}
 \label{fig:pixel_nos}
 \includegraphics[scale=0.8]{02_capitulo/pixel-nos.png}
-\\ \adicionadomarcelo{Fonte: \citeonline{NielsenNNDL2015}.}
+% \\ \adicionadomarcelo{Fonte: \citeonline{NielsenNNDL2015}.}
 \end{figure}
 
 \modificado{O ciclo de treinamento pode ser resumido nos seguintes passos:}
@@ -132,7 +132,7 @@ Há diversas funções de ativação, cada uma com suas próprias característic
 
 \modificado{No \textbf{treinamento}, o modelo é alimentado com grandes volumes de dados e ajustado iterativamente pelo \textit{backpropagation}. Esse processo é computacionalmente intenso e geralmente requer \textit{hardware} especializado (GPUs ou TPUs), muitas vezes organizado em \textit{clusters} com centenas ou milhares de aceleradores.}
 
-\modificado{Na \textbf{inferência}, o modelo já treinado é utilizado para gerar predições. O custo de uma única predição é relativamente baixo; contudo, em contextos de larga escala --- como os modelos de IA generativa servindo milhões de requisições diárias --- o custo energético agregado é expressivo \cite{Patterson2021}.}
+\modificado{Na \textbf{inferência}, o modelo já treinado é utilizado para gerar predições. O custo de uma única predição é relativamente baixo; contudo, em contextos de larga escala --- como os modelos de IA generativa servindo milhões de requisições diárias --- o custo energético agregado é expressivo \cite{Luccioni2022}.}
 
 \section{Compressão de Modelos}
 \modificado{Com o crescimento do \textit{Deep Learning}, os modelos de IA vêm dobrando em tamanho a cada poucos anos \cite{Sevilla2022}. Modelos de alta performance costumam ser otimizados exclusivamente para acurácia, resultando em redes com grande quantidade de parâmetros, que ocupam muito espaço de armazenamento e demandam um elevado número de operações em ponto flutuante (FLOPs) para serem executadas. Isso é particularmente problemático em dispositivos com capacidade limitada, como \textit{smartphones} e sistemas embarcados, e também em contextos de uso em larga escala, nos quais o custo energético se torna significativo.}
@@ -152,7 +152,7 @@ Há diversas funções de ativação, cada uma com suas próprias característic
 \caption{\adicionadomarcelo{Ilustração do processo de poda: a rede original (densa) tem conexões e/ou neurônios removidos, tornando-se esparsa.}}
 \label{fig:poda_ilustracao}
 \includegraphics[scale=0.6]{02_capitulo/imagepoda.png}
-\\ \adicionadomarcelo{Fonte: \citeonline{Han2015}.}
+% \\ \adicionadomarcelo{Fonte: \citeonline{Han2015}.}
 \end{figure}
 
 \section{Poda Neural (Pruning)}\label{sec:pruning}
@@ -177,7 +177,7 @@ Há diversas funções de ativação, cada uma com suas próprias característic
 \caption{\adicionadomarcelo{Pipeline clássico de poda por magnitude: treinamento do modelo denso, remoção dos pesos de menor magnitude e retreinamento (\textit{fine-tuning}) dos pesos remanescentes.}}
 \label{fig:poda_magnitude}
 \includegraphics[width=0.85\textwidth]{02_capitulo/imagepodamagnitude.png}
-\\ \adicionadomarcelo{Fonte: \citeonline{Han2015}.}
+% \\ \adicionadomarcelo{Fonte: \citeonline{Han2015}.}
 \end{figure}
 
 \begin{figure}[htb]
@@ -185,7 +185,7 @@ Há diversas funções de ativação, cada uma com suas próprias característic
 \caption{\adicionadomarcelo{Comparação esquemática entre uma rede densa e uma rede podada, em que conexões de menor importância são removidas.}}
 \label{fig:pruning_denso_esparso}
 \includegraphics[scale=0.5]{02_capitulo/imagepruning.png}
-\\ \adicionadomarcelo{Fonte: \citeonline{Han2015}.}
+% \\ \adicionadomarcelo{Fonte: \citeonline{Han2015}.}
 \end{figure}
 
 \subsection{Pipeline Geral da Poda}
