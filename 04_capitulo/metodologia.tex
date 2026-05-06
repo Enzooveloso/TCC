@@ -109,39 +109,72 @@ As seções seguintes deste capítulo detalham individualmente cada componente d
 
 \section{\textit{Dataset}}\label{sec:dataset}
 
-\subsection{CIFAR-100}
+A escolha do \textit{dataset} condiciona, de maneira fundamental, a complexidade da tarefa de classificação, o tempo de treinamento e a relevância dos resultados perante a literatura. Em experimentos comparativos de poda neural, o conjunto de dados precisa ser suficientemente desafiador para que as diferenças entre métodos se manifestem de forma mensurável, mas operacionalmente viável o suficiente para que múltiplas repetições sejam executáveis no escopo de um trabalho de graduação. Conforme discutido na Seção~\ref{sec:visao_geral}, o CIFAR-100 atende a esse equilíbrio e foi selecionado como \textit{dataset} principal deste trabalho. Esta seção detalha as características técnicas do conjunto, apresenta a justificativa acadêmica de sua escolha, descreve o pré-processamento aplicado e formaliza o protocolo de divisão dos dados.
 
-\modificado{Para o treinamento e a avaliação dos modelos, foi selecionado o \textit{dataset} CIFAR-100 \cite{Krizhevsky2009}, um conjunto de dados amplamente utilizado na literatura de \textit{Deep Learning} e, em particular, em trabalhos sobre poda neural \cite{Li2017, Frankle2019, Blalock2020}. O CIFAR-100 contém 60.000 imagens coloridas de baixa resolução (32$\times$32 pixels), distribuídas em 100 classes mutuamente exclusivas, com 600 imagens por classe. O conjunto é dividido em 50.000 imagens para treinamento e 10.000 para teste.}
+\subsection{O CIFAR-100}\label{subsec:cifar100}
 
-\adicionadomarcelo{A escolha do CIFAR-100 em detrimento de opções maiores, como o ImageNet-1K, é motivada pela viabilidade computacional dentro do tempo e dos recursos disponíveis para o trabalho. Trata-se de um \textit{dataset} complexo o suficiente --- 100 classes e imagens naturais --- para que a aplicação de poda gere variações mensuráveis em acurácia e em consumo energético, e leve o bastante para permitir múltiplas repetições dos experimentos. Adicionalmente, a maioria dos trabalhos de poda reporta resultados em CIFAR, o que facilita a comparação com a literatura.}
+O CIFAR-100 foi introduzido por \citeonline{Krizhevsky2009} no relatório técnico ``Learning Multiple Layers of Features from Tiny Images'', publicado pelo Departamento de Ciência da Computação da Universidade de Toronto. O conjunto é derivado de um subconjunto anotado do projeto ``80 Million Tiny Images'', uma coleção massiva de imagens de baixa resolução coletadas automaticamente da internet. A proposta de \citeonline{Krizhevsky2009} foi selecionar e revisar manualmente as anotações de uma fração desse projeto, produzindo dois \textit{datasets} com rótulos confiáveis e estrutura padronizada: o CIFAR-10 e o CIFAR-100. Desde sua publicação, ambos tornaram-se referências canônicas em avaliações de arquiteturas de redes neurais convolucionais \cite{He2016, Krizhevsky2012} e, em particular, em estudos de poda neural \cite{Han2015, Li2017, Frankle2019, Blalock2020}.
 
-% \subsection{Pré-processamento e Aumentação de Dados}
+O CIFAR-100 contém 60.000 imagens coloridas de resolução $32 \times 32$ pixels, codificadas nos três canais RGB. Essas imagens estão distribuídas em 100 classes mutuamente exclusivas, com exatamente 600 imagens por classe. A partição oficial do conjunto reserva 500 imagens por classe para treinamento e 100 para teste, totalizando 50.000 exemplos de treinamento e 10.000 de teste. As classes cobrem uma ampla variedade de categorias de objetos do mundo real: animais (mamíferos, insetos, peixes, répteis), veículos, plantas, cenas externas e objetos domésticos, entre outras.
 
-% \adicionadomarcelo{As imagens são submetidas a um conjunto padrão de transformações antes de serem fornecidas ao modelo, conforme indicado na Tabela~\ref{tab:transformacoes}.}
+Um aspecto estrutural relevante do CIFAR-100 é sua organização hierárquica: as 100 classes de granularidade fina estão agrupadas em 20 superclasses de granularidade grossa. Por exemplo, as classes ``leopardo'', ``leão'', ``tigre'' e ``urso'' pertencem à superclasse ``grandes carnívoros''; ``ônibus'', ``caminhão'' e ``trator'' compõem a superclasse ``veículos 2''. Essa estrutura é um diferencial em relação ao CIFAR-10 e permite que experimentos futuros avaliem tanto a classificação fina (100 classes) quanto a grossa (20 superclasses), embora neste trabalho seja adotada exclusivamente a tarefa de classificação nas 100 classes.
 
-% \begin{table}[htb]
-% \centering
-% \caption{Transformações aplicadas às imagens do CIFAR-100.}
-% \label{tab:transformacoes}
-% \begin{tabular}{lll}
-% \hline
-% \textbf{Etapa} & \textbf{Treinamento} & \textbf{Avaliação} \\
-% \hline
-% \textit{Random crop} (32$\times$32, \textit{padding} 4) & \checkmark & --- \\
-% \textit{Horizontal flip} aleatório & \checkmark & --- \\
-% Conversão para \textit{tensor} & \checkmark & \checkmark \\
-% Normalização (média/desvio do CIFAR-100) & \checkmark & \checkmark \\
-% \hline
-% \end{tabular}\\
-% \textit{Fonte: Elaboração própria.}
-% \end{table}
+Em termos de resolução, as imagens de $32 \times 32$ pixels contrastam fortemente com as $224 \times 224$ pixels tipicamente empregadas em experimentos com ImageNet. Essa diferença implica perda de detalhes visuais de alta frequência, o que torna o CIFAR-100 uma tarefa de classificação baseada em características de nível intermediário e global, mais do que em texturas finas. Para redes profundas como a ResNet-50 \cite{He2016}, treinadas originalmente para imagens de maior resolução, a adaptação ao formato $32 \times 32$ requer atenção ao pré-processamento --- aspecto tratado na Subseção~\ref{subsec:preprocessamento}.
 
-% \adicionadomarcelo{A normalização utiliza a média e o desvio-padrão calculados sobre o próprio CIFAR-100 (canais R, G, B). A aumentação por \textit{random crop} e \textit{horizontal flip} é a configuração padrão para esse \textit{dataset}, sendo adotada na maioria dos trabalhos da área \cite{He2016, Li2017}. Ela não é aplicada na avaliação, na qual as imagens são apresentadas em sua forma original, apenas tensorizadas e normalizadas.}
+\subsection{Justificativa da Escolha}\label{subsec:dataset_justificativa}
 
-\subsection{Conjuntos de Treinamento, Validação e Teste}
+A seleção do CIFAR-100 como \textit{dataset} principal é uma decisão metodológica de consequências substantivas para o escopo e a generalidade dos resultados. Esta subseção articula a defesa dessa escolha em contraposição às alternativas consideradas.
 
-\adicionadomarcelo{Dos 50.000 exemplos de treinamento, 10\% são reservados para validação, totalizando 45.000 exemplos efetivos de treinamento e 5.000 de validação. O conjunto de teste, com 10.000 exemplos, é mantido intacto e utilizado somente para a avaliação final dos modelos. }
-% A divisão treino/validação é feita de forma estratificada por classe e fixada por semente aleatória, de modo que a mesma divisão se preserva entre os experimentos.
+A alternativa natural de maior escala seria o ImageNet-1K, com 1,28 milhão de imagens de treinamento distribuídas em 1.000 classes e resolução padrão de $224 \times 224$ pixels. O ImageNet-1K constitui o padrão-ouro em \textit{benchmarks} de classificação visual e é, inclusive, a fonte dos pesos pré-treinados utilizados neste trabalho. Contudo, o foco deste estudo não é reproduzir um \textit{benchmark} de larga escala, mas analisar comparativamente o efeito de diferentes paradigmas de poda sobre acurácia e consumo energético. Essa análise exige múltiplas repetições de cada configuração experimental --- quatro taxas de poda por método, dois métodos da literatura mais a estratégia otimizada, e três sementes por configuração --- totalizando dezenas de ciclos completos de poda e \textit{fine-tuning}. O custo computacional de cada ciclo sobre o ImageNet-1K seria proibitivo para o escopo deste trabalho, sem que tal custo adicional trouxesse ganho proporcional para responder à pergunta de pesquisa. Não se trata, portanto, de uma limitação de recursos que impede o uso de ImageNet-1K, mas de uma escolha deliberada de proporcionalidade: o ImageNet-1K excede o que é necessário para as comparações pretendidas.
+
+No extremo oposto do espectro de complexidade situa-se o CIFAR-10, com apenas dez classes. Redes modernas atingem acurácias superiores a 95\% em CIFAR-10, mesmo após poda agressiva, o que produz diferenças de desempenho entre métodos que mal superam o desvio-padrão das medições --- tornando a comparação pouco discriminativa. O CIFAR-100, com 100 classes, opera em uma faixa de acurácia tipicamente entre 60\% e 80\% para modelos como a ResNet-50 após \textit{fine-tuning}, faixa na qual a degradação causada por diferentes taxas e granularidades de poda é claramente mensurável e diferenciada entre métodos.
+
+Uma terceira família de opções inclui \textit{datasets} de escala intermediária, como o Tiny ImageNet (200 classes, resolução $64 \times 64$). Esses conjuntos são menos adotados na literatura específica de poda, o que comprometeria a comparabilidade direta dos resultados com trabalhos de referência. A representatividade do CIFAR-100 na literatura é, por si mesma, um critério de escolha relevante: \citeonline{Li2017} utilizam o CIFAR-10 e o CIFAR-100 como \textit{datasets} de avaliação primários; \citeonline{Frankle2019} empregam o CIFAR-10 para experimentos centrais; \citeonline{Blalock2020}, no amplo levantamento do estado da arte em poda neural, observam que CIFAR-10 e CIFAR-100 são os \textit{datasets} mais frequentemente reportados nos trabalhos da área. Adotar o CIFAR-100 garante que os resultados obtidos possam ser situados diretamente em relação a essa base de comparação consolidada.
+
+Do ponto de vista técnico, o CIFAR-100 reúne as propriedades necessárias para os objetivos do trabalho: complexidade adequada para revelar diferenças entre métodos de poda, tamanho operacional que viabiliza múltiplas repetições, e ampla adoção na literatura de compressão de modelos. É por mérito técnico, portanto, e não por conveniência, que o CIFAR-100 é adotado como \textit{dataset} principal.
+
+Reconhece-se, contudo, que essa escolha implica uma limitação de escopo: os resultados obtidos descrevem o comportamento dos métodos de poda em um regime de baixa resolução com 100 classes, e não podem ser extrapolados diretamente para cenários de larga escala como o ImageNet-1K, onde efeitos de escala podem alterar os padrões de redundância e sensibilidade das camadas. Essa limitação é reconhecida formalmente na discussão das limitações metodológicas do trabalho.
+
+\subsection{Pré-processamento}\label{subsec:preprocessamento}
+
+O pré-processamento das imagens é etapa essencial em experimentos com redes neurais convolucionais. Duas funções principais são desempenhadas pelo conjunto de transformações aplicadas antes do treinamento: a normalização dos dados de entrada, que melhora o condicionamento numérico das operações de \textit{backpropagation} \cite{Goodfellow2016}, e a aumentação de dados (\textit{data augmentation}), que reduz o risco de \textit{overfitting} ao ampliar artificialmente a diversidade do conjunto de treinamento \cite{Goodfellow2016}. O protocolo adotado neste trabalho segue as transformações estabelecidas por \citeonline{He2016} para experimentos com ResNet em CIFAR, posteriormente consolidadas como padrão nos trabalhos de poda que utilizam esse \textit{dataset} \cite{Li2017}.
+
+A normalização é realizada por canal RGB: cada canal de cada imagem tem sua média subtraída e é dividido pelo desvio-padrão correspondente, ambos calculados sobre o conjunto de treinamento do próprio CIFAR-100. Esse procedimento desloca a distribuição dos valores de entrada para uma região centrada em zero com variância unitária, o que torna o gradiente computado pelo \textit{backpropagation} mais bem-comportado e favorece a convergência do otimizador \cite{Goodfellow2016}. A normalização é aplicada tanto no treinamento quanto na avaliação, pois a rede foi treinada sob essa escala de entrada e suas predições pressupõem esse condicionamento.
+
+A aumentação de dados restringe-se à fase de treinamento e compreende duas transformações: \textit{random crop} com \textit{padding} de 4 pixels e \textit{horizontal flip} aleatório. O \textit{random crop} adiciona quatro pixels de borda à imagem (preenchidos com zeros) e recorta uma janela de $32 \times 32$ pixels em posição aleatória, simulando pequenas variações de posição e enquadramento do objeto. O \textit{horizontal flip} espelha horizontalmente a imagem com probabilidade 0,5, introduzindo invariância à orientação lateral. Juntas, essas duas transformações constituem o protocolo canônico de aumentação para CIFAR, adotado em \citeonline{He2016} e em praticamente toda a literatura de poda subsequente \cite{Li2017, Frankle2019}. Durante a avaliação, nenhuma aumentação é aplicada: as imagens são convertidas para \textit{tensor} e normalizadas, refletindo o comportamento do modelo em condições reais de inferência.
+
+A Tabela~\ref{tab:transformacoes} resume as transformações aplicadas a cada fase.
+
+\begin{table}[htb]
+\centering
+\caption{Transformações de pré-processamento aplicadas às imagens do CIFAR-100.}
+\label{tab:transformacoes}
+\begin{tabular}{lcc}
+\hline
+\textbf{Transformação} & \textbf{Treinamento} & \textbf{Avaliação} \\
+\hline
+\textit{Random crop} ($32 \times 32$, \textit{padding} 4) & \checkmark & --- \\
+\textit{Horizontal flip} aleatório (p = 0,5)             & \checkmark & --- \\
+Conversão para \textit{tensor}                           & \checkmark & \checkmark \\
+Normalização (média e desvio-padrão por canal RGB)       & \checkmark & \checkmark \\
+\hline
+\end{tabular}\\
+\textit{Fonte: Elaboração própria, com protocolo baseado em \citeonline{He2016}.}
+\end{table}
+
+\subsection{Conjuntos de Treinamento, Validação e Teste}\label{subsec:divisao_dados}
+
+O protocolo de divisão dos dados segue a partição oficial do CIFAR-100, com uma modificação: dos 50.000 exemplos oficiais de treinamento, 10\% são reservados para compor um conjunto de validação, totalizando 45.000 exemplos efetivos de treinamento e 5.000 de validação. O conjunto de teste oficial, com 10.000 exemplos, é mantido intacto e utilizado exclusivamente para a avaliação final dos modelos. Essa separação é metodologicamente necessária para evitar que decisões de ajuste de hiperparâmetros --- como a seleção da época de melhor desempenho (\textit{early stopping}) --- sejam tomadas com base no mesmo conjunto usado para reportar os resultados finais, o que introduziria viés otimista nas métricas reportadas \cite{Goodfellow2016}.
+
+A divisão entre treinamento e validação é realizada de forma estratificada por classe: para cada uma das 100 classes, retira-se proporcionalmente a mesma fração de exemplos (10\%), garantindo que todas as classes estejam representadas com a mesma densidade relativa nos dois subconjuntos. Sem estratificação, a amostragem aleatória simples pode, por flutuação estatística, sub-representar ou super-representar determinadas classes no conjunto de validação, introduzindo viés na estimativa de acurácia durante o treinamento e distorcendo o critério de \textit{early stopping}. A estratificação mitiga esse risco de forma determinística.
+
+A divisão é fixada por semente aleatória, de modo que exatamente o mesmo subconjunto de validação é usado em todos os experimentos --- independentemente do método de poda, da taxa ou da semente usada no treinamento. Essa fixação isola o efeito do método de poda do efeito da composição do conjunto de validação, garantindo que diferenças de desempenho entre configurações não sejam atribuíveis a variações na divisão dos dados. O princípio de reprodutibilidade que orienta essa escolha é discutido em maior detalhe na seção de reprodutibilidade do trabalho.
+
+\subsection{Carregamento e Acesso}\label{subsec:carregamento_dados}
+
+O acesso ao CIFAR-100 é feito por meio da classe \texttt{torchvision.datasets.CIFAR100}, componente da biblioteca \texttt{torchvision} distribuída com o PyTorch \cite{Paszke2019}. Essa interface padroniza o carregamento, realiza o \textit{download} automático do arquivo comprimido na primeira execução e disponibiliza os dados já em formato compatível com o \textit{pipeline} de treinamento do PyTorch. O uso de uma API oficial evita inconsistências de formato e simplifica a reprodução dos experimentos em ambientes distintos.
+
+O carregamento durante o treinamento e a avaliação é gerenciado pelo componente \texttt{DataLoader} do PyTorch, que percorre o conjunto de dados em lotes (\textit{batches}) de tamanho configurável. Os hiperparâmetros do \texttt{DataLoader} --- tamanho do lote, embaralhamento (\textit{shuffle}) e número de trabalhadores paralelos de leitura (\texttt{num\_workers}) --- são definidos nos arquivos de configuração YAML do projeto, de modo que qualquer alteração fica rastreada no controle de versão. O embaralhamento é habilitado apenas no conjunto de treinamento, garantindo que cada época apresente os exemplos em ordem diferente sem perturbar a avaliação. Uma vantagem prática do CIFAR-100 é seu tamanho reduzido: o conjunto completo ocupa aproximadamente 170 MB descomprimido e pode ser integralmente carregado em memória RAM antes do início do treinamento, eliminando a latência de leitura de disco a cada iteração e acelerando substancialmente os experimentos em comparação com \textit{datasets} de maior escala.
 
 \section{Modelo}\label{sec:modelo}
 
