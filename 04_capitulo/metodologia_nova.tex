@@ -1,0 +1,143 @@
+% =============================================================
+% Capítulo 4 — Metodologia
+% =============================================================
+
+\chapter{Metodologia}\label{chap:metodologia}
+
+Este capítulo apresenta o percurso metodológico adotado no trabalho, organizado em cinco etapas.
+As decisões concretas decorrentes desses critérios --- incluindo o modelo selecionado, os
+\textit{datasets} empregados e as configurações de poda --- são descritas no
+Capítulo~\ref{chap:desenvolvimento}.
+
+% -------------------------------------------------------
+\section{Seleção e Implementação do Modelo de Referência}\label{sec:metodologia_modelo}
+% -------------------------------------------------------
+
+% Critérios utilizados (o método) para selecionar e implementar o modelo de referência.
+% Citar libs do Python que serão usadas. FOCO NOS CRITÉRIOS.
+% Limitar quantidade de parâmetros devido a limitações de hardware.
+
+O modelo de referência (\textit{baseline}) corresponde à versão original do modelo de linguagem
+de grande escala (\textit{Large Language Model} --- LLM) antes de qualquer processo de poda.
+Ele serve como padrão para mensurar a perda de desempenho introduzida pela compressão: todas as
+métricas dos modelos podados são comparadas às métricas desse modelo original.
+
+Para a seleção do modelo de referência, foram adotados os seguintes critérios:
+
+\begin{itemize}
+    \item ser um LLM representativo, amplamente utilizado na literatura de compressão de modelos;
+    \item dispor de pesos pré-treinados publicamente disponíveis;
+    \item apresentar tamanho compatível com as restrições de \textit{hardware} disponível;
+    \item possuir ampla documentação em trabalhos de poda neural;
+    \item contar com implementação acessível em \textit{frameworks} consolidados, como
+          PyTorch e Hugging Face Transformers.
+\end{itemize}
+
+A implementação do modelo de referência utiliza as bibliotecas PyTorch \cite{Paszke2019} e
+Hugging Face Transformers como base. O modelo selecionado a partir desses critérios é
+apresentado no Capítulo~\ref{chap:desenvolvimento}.
+
+% -------------------------------------------------------
+\section{Implementação das Estratégias de Poda sem Otimização}\label{sec:metodologia_poda_sem}
+% -------------------------------------------------------
+
+% Falar de estratégias de poda, o que elas fazem, por que foram escolhidas e quais foram escolhidas.
+% Não precisa explicar a fundo aqui — explicação detalhada está no referencial teórico.
+
+As estratégias de poda sem otimização têm por objetivo reduzir o número de parâmetros de um
+modelo pré-treinado, eliminando pesos ou estruturas consideradas menos relevantes para o
+desempenho preditivo. Foram consideradas três abordagens:
+
+\begin{itemize}
+    \item poda baseada em magnitude dos pesos, que remove parâmetros cujos valores absolutos
+          são inferiores a um limiar;
+    \item poda estruturada, que elimina unidades arquiteturais inteiras --- como neurônios,
+          filtros ou cabeças de atenção --- preservando a densidade matricial do modelo resultante;
+    \item poda não estruturada, que remove conexões individuais, gerando matrizes esparsas
+          sem alterar a topologia da rede.
+\end{itemize}
+
+Os critérios que orientaram a escolha das estratégias a implementar foram:
+
+\begin{itemize}
+    \item representatividade na literatura de compressão de modelos;
+    \item complementaridade entre granularidades distintas de remoção;
+    \item viabilidade de implementação com as ferramentas disponíveis.
+\end{itemize}
+
+% TODO: verificar se a frase a seguir faz sentido para o nosso trabalho (anotação da reunião 06/05)
+Para isso, será necessário desenvolver funções de avaliação de importância de parâmetros, que
+orientem o processo de remoção de pesos com impacto mínimo no desempenho.
+
+% Ao final desta seção, deve estar definido qual o modelo escolhido para ser implementado (anotação da reunião 06/05)
+
+As estratégias selecionadas com base nesses critérios, bem como os detalhes de sua
+implementação, são apresentados no Capítulo~\ref{chap:desenvolvimento}.
+
+% -------------------------------------------------------
+\section{Implementação das Estratégias de Poda com Otimização}\label{sec:metodologia_poda_com}
+% -------------------------------------------------------
+
+Esta é a etapa central do trabalho. O objetivo é investigar se a combinação das estratégias de
+poda com técnicas de otimização resulta em modelos mais eficientes do que a poda aplicada de
+forma direta, sem qualquer refinamento adicional.
+
+As estratégias de otimização a investigar incluem:
+
+\begin{itemize}
+    \item comparação entre taxas de poda fixas e dinâmicas;
+    \item variação do momento de aplicação da poda --- antes do treinamento, durante ou após
+          o \textit{fine-tuning};
+    \item análise de sensibilidade por camada, para alocação não uniforme do orçamento de poda;
+    \item \textit{Knowledge Distillation}, na qual um modelo menor (\textit{student}) é treinado
+          para reproduzir o comportamento de um modelo maior (\textit{teacher}).
+\end{itemize}
+
+A comparação entre os modelos obtidos com e sem otimização visa identificar combinações que
+melhorem o balanço entre desempenho preditivo e eficiência computacional em relação às
+estratégias aplicadas sem otimização.
+
+% -------------------------------------------------------
+\section{Métricas de Avaliação}\label{sec:metodologia_metricas}
+% -------------------------------------------------------
+
+% Esta seção precisa explicar as métricas — diferentemente das anteriores que apenas listam critérios,
+% as métricas EM SI fazem parte da metodologia (anotação literal da reunião 06/05)
+
+As métricas de avaliação são organizadas em três dimensões: desempenho preditivo, custo
+computacional e impacto ambiental.
+
+\textbf{Desempenho preditivo.} A métrica de desempenho preditivo a ser utilizada depende da
+tarefa do modelo selecionado e será especificada no Capítulo~\ref{chap:desenvolvimento}.
+Em geral, mede a qualidade das predições do modelo em relação a um conjunto de referência.
+
+\textbf{Custo computacional.} São mensurados:
+\begin{itemize}
+    \item número de parâmetros remanescentes no modelo após a poda;
+    \item redução de operações de ponto flutuante (FLOPs) em relação ao modelo de referência;
+    \item tempo de inferência, correspondente ao tempo necessário para processar uma entrada;
+    \item tamanho do modelo, tanto em disco quanto em memória durante a inferência.
+\end{itemize}
+
+\textbf{Impacto ambiental.} São registrados o consumo energético e as emissões equivalentes de
+CO\textsubscript{2} durante a inferência, conforme detalhado na
+Seção~\ref{sec:metodologia_energia}.
+
+Todas as métricas são calculadas em relação ao modelo de referência, de modo que os resultados
+expressem ganhos ou perdas proporcionais à compressão introduzida.
+
+% -------------------------------------------------------
+\section{Análise de Consumo Energético}\label{sec:metodologia_energia}
+% -------------------------------------------------------
+
+% Verificar como será feita a análise do consumo energético baseado nos testes (anotação da reunião 06/05)
+
+A análise do consumo energético é realizada por meio de ferramentas de monitoramento que
+registram o uso de recursos de \textit{hardware} durante a execução dos experimentos de
+inferência. O objetivo é quantificar os ganhos energéticos obtidos pela poda, relacionando-os
+à redução de parâmetros e de operações realizadas.
+
+Busca-se mensurar: (i) o consumo energético absoluto de cada configuração de modelo; e
+(ii) a redução relativa em comparação ao modelo de referência. A relação entre redução
+de parâmetros, redução de operações e economia de energia é analisada para identificar
+em que condições a compressão se traduz efetivamente em menor custo energético.
