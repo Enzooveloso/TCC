@@ -177,75 +177,76 @@ O impacto ambiental é mensurado por meio de dois indicadores:
           automaticamente.
 \end{itemize}
 
-Todas as métricas são calculadas tanto para o modelo de referência quanto para cada
-configuração de modelo podado, de modo que os resultados expressem ganhos ou perdas
-proporcionais à compressão introduzida, conforme detalhado a seguir.}
+% Todas as métricas são calculadas tanto para o modelo de referência quanto para cada
+% configuração de modelo podado, de modo que os resultados expressem ganhos ou perdas
+% proporcionais à compressão introduzida, conforme detalhado a seguir.
+}
 
 % -------------------------------------------------------
 % AJUSTE: reunião 13/05 — reescrita completa da Seção 3.5 (como medir e analisar energia)
-\section{Análise de Consumo Energético}\label{sec:metodologia_energia}
-% -------------------------------------------------------
+% \section{Análise de Consumo Energético}\label{sec:metodologia_energia}
+% % -------------------------------------------------------
 
-\adicionadomarcelo{Esta seção detalha o procedimento de coleta e análise das métricas de consumo energético,
-complementando as definições apresentadas na seção anterior.
+% \adicionadomarcelo{Esta seção detalha o procedimento de coleta e análise das métricas de consumo energético,
+% complementando as definições apresentadas na seção anterior.
 
-\subsection*{Mensuração do consumo energético absoluto}
+% \subsection*{Mensuração do consumo energético absoluto}
 
-A medição do consumo energético é realizada por meio de ferramentas de \textit{software}
-que monitoram o uso de \textit{hardware} durante a execução dos experimentos. Em
-particular, a biblioteca CodeCarbon \cite{CodeCarbon2023} integra leituras periódicas de
-consumo elétrico de CPU e GPU, registrando a energia total consumida ao longo de cada
-sessão de inferência sobre o conjunto de teste. O resultado é uma medida de energia em
-kWh, acompanhada de uma estimativa de emissões equivalentes de
-CO\textsubscript{2}.
+% A medição do consumo energético é realizada por meio de ferramentas de \textit{software}
+% que monitoram o uso de \textit{hardware} durante a execução dos experimentos. Em
+% particular, a biblioteca CodeCarbon \cite{CodeCarbon2023} integra leituras periódicas de
+% consumo elétrico de CPU e GPU, registrando a energia total consumida ao longo de cada
+% sessão de inferência sobre o conjunto de teste. O resultado é uma medida de energia em
+% kWh, acompanhada de uma estimativa de emissões equivalentes de
+% CO\textsubscript{2}.
 
-Para mitigar a variância natural das medições de energia --- que tendem a ser mais ruidosas
-do que medições de desempenho preditivo ---, cada configuração de modelo é avaliada em
-múltiplas execuções com sementes aleatórias distintas. Os resultados são reportados como
-média e desvio-padrão.
+% Para mitigar a variância natural das medições de energia --- que tendem a ser mais ruidosas
+% do que medições de desempenho preditivo ---, cada configuração de modelo é avaliada em
+% múltiplas execuções com sementes aleatórias distintas. Os resultados são reportados como
+% média e desvio-padrão.
 
-\subsection*{Cálculo da redução relativa}
+% \subsection*{Cálculo da redução relativa}
 
-Para cada configuração de modelo podado, a redução relativa de consumo energético é
-calculada por comparação direta com o consumo do modelo de referência, conforme a
-expressão:
+% Para cada configuração de modelo podado, a redução relativa de consumo energético é
+% calculada por comparação direta com o consumo do modelo de referência, conforme a
+% expressão:
 
-\[
-    \text{Redução relativa} = \frac{E_{\text{baseline}} - E_{\text{podado}}}{E_{\text{baseline}}} \times 100\%
-\]
+% \[
+%     \text{Redução relativa} = \frac{E_{\text{baseline}} - E_{\text{podado}}}{E_{\text{baseline}}} \times 100\%
+% \]
 
-\noindent em que $E_{\text{baseline}}$ e $E_{\text{podado}}$ representam, respectivamente,
-a energia consumida pelo modelo de referência e pelo modelo podado durante a inferência
-sobre o mesmo conjunto de teste. Todas as comparações são realizadas em iguais condições
-de \textit{hardware}, mesmo conjunto de teste e mesmo número de iterações de inferência,
-de modo a garantir a validade das comparações.
+% \noindent em que $E_{\text{baseline}}$ e $E_{\text{podado}}$ representam, respectivamente,
+% a energia consumida pelo modelo de referência e pelo modelo podado durante a inferência
+% sobre o mesmo conjunto de teste. Todas as comparações são realizadas em iguais condições
+% de \textit{hardware}, mesmo conjunto de teste e mesmo número de iterações de inferência,
+% de modo a garantir a validade das comparações.
 
-\subsection*{Relação entre FLOPs, parâmetros e consumo energético}
+% \subsection*{Relação entre FLOPs, parâmetros e consumo energético}
 
-A redução teórica de FLOPs, calculada por análise estática do grafo computacional,
-constitui um indicador \textit{proxy} da redução de custo computacional, mas não se
-traduz linearmente em redução de energia. \textit{Hardware} moderno apresenta componentes
-de consumo basal --- como memória RAM, controladores e sistemas de refrigeração --- cujo
-consumo não escala proporcionalmente com o número de operações realizadas.
+% A redução teórica de FLOPs, calculada por análise estática do grafo computacional,
+% constitui um indicador \textit{proxy} da redução de custo computacional, mas não se
+% traduz linearmente em redução de energia. \textit{Hardware} moderno apresenta componentes
+% de consumo basal --- como memória RAM, controladores e sistemas de refrigeração --- cujo
+% consumo não escala proporcionalmente com o número de operações realizadas.
 
-A redução de parâmetros impacta o tamanho do modelo em memória, o que pode diminuir as
-transferências entre memória e processador --- fonte significativa de consumo energético
-em arquiteturas de \textit{hardware} contemporâneas. A poda estruturada tende a apresentar
-redução de energia proporcional à redução de FLOPs, pois o \textit{hardware} efetivamente
-executa menos operações. A poda não estruturada, em contrapartida, pode reduzir os FLOPs
-teóricos sem reduzir proporcionalmente o consumo energético real, uma vez que, em
-\textit{hardware} sem suporte nativo a esparsidade, multiplicações por zero ainda consomem
-ciclos de processamento.
+% A redução de parâmetros impacta o tamanho do modelo em memória, o que pode diminuir as
+% transferências entre memória e processador --- fonte significativa de consumo energético
+% em arquiteturas de \textit{hardware} contemporâneas. A poda estruturada tende a apresentar
+% redução de energia proporcional à redução de FLOPs, pois o \textit{hardware} efetivamente
+% executa menos operações. A poda não estruturada, em contrapartida, pode reduzir os FLOPs
+% teóricos sem reduzir proporcionalmente o consumo energético real, uma vez que, em
+% \textit{hardware} sem suporte nativo a esparsidade, multiplicações por zero ainda consomem
+% ciclos de processamento.
 
-Essa análise sustenta a comparação central deste trabalho: validar empiricamente se
-diferentes paradigmas de poda traduzem-se ou não em ganhos energéticos reais, e em que
-proporção.
+% Essa análise sustenta a comparação central deste trabalho: validar empiricamente se
+% diferentes paradigmas de poda traduzem-se ou não em ganhos energéticos reais, e em que
+% proporção.
 
-\subsection*{Significado prático em larga escala}
+% \subsection*{Significado prático em larga escala}
 
-Modelos de linguagem de grande escala em produção servem milhões de requisições diárias.
-Nessa escala, mesmo reduções modestas no consumo energético por inferência podem resultar
-em economia significativa de energia e redução de emissões de carbono ao longo do tempo
-\cite{Strubell2019}. A análise conduzida neste trabalho, embora realizada em escala
-experimental, busca fornecer evidências quantitativas que permitam estimar o impacto
-potencial dessas técnicas quando aplicadas em cenários de produção.}
+% Modelos de linguagem de grande escala em produção servem milhões de requisições diárias.
+% Nessa escala, mesmo reduções modestas no consumo energético por inferência podem resultar
+% em economia significativa de energia e redução de emissões de carbono ao longo do tempo
+% \cite{Strubell2019}. A análise conduzida neste trabalho, embora realizada em escala
+% experimental, busca fornecer evidências quantitativas que permitam estimar o impacto
+% potencial dessas técnicas quando aplicadas em cenários de produção.}

@@ -1,0 +1,56 @@
+% =====================================================================
+% SEÇÃO: Arquitetura Transformer (para integrar ao Capítulo 2)
+% Criada em rodada separada para revisão isolada.
+% Integrar posteriormente em 02_capitulo/fundamentacao_teorica.tex,
+% idealmente ANTES da seção "Consumo Energético em Redes Neurais".
+% =====================================================================
+
+\section{Arquitetura Transformer}\label{sec:transformer}
+
+A arquitetura \textit{Transformer}, proposta por \citeonline{Vaswani2017}, representou uma mudança de paradigma no processamento de sequências ao substituir o processamento recorrente pelo mecanismo de atenção como operação fundamental. Desde sua introdução, tornou-se a base dos principais modelos de linguagem de grande escala e de uma ampla gama de aplicações em processamento de linguagem natural, visão computacional e geração de conteúdo. Esta seção apresenta os fundamentos da arquitetura, desde as limitações das abordagens anteriores até o modelo GPT-2, que é objeto de estudo deste trabalho.
+
+% SUGESTÃO DE FIGURA: diagrama da arquitetura completa do Transformer (encoder-decoder), adaptado de Vaswani et al. (2017), destacando os blocos de autoatenção multi-cabeça e as camadas feedforward.
+
+% \subsection{Limitações das Arquiteturas Recorrentes}\label{subsec:limitacoes_rnn}
+
+% Antes do advento do \textit{Transformer}, o processamento de sequências textuais era dominado pelas redes neurais recorrentes (\textit{Recurrent Neural Networks}, RNNs) e por suas variantes com memória de longo prazo, como as redes LSTM (\textit{Long Short-Term Memory}) e GRU (\textit{Gated Recurrent Unit}). Essas arquiteturas processam a sequência de entrada passo a passo, em ordem estritamente temporal: a representação de cada elemento depende do processamento de todos os elementos anteriores, o que impõe uma natureza inerentemente sequencial ao cálculo.
+
+% Essa sequencialidade é a principal limitação dessas arquiteturas. Primeiramente, ela impede a paralelização do processamento durante o treinamento: como o estado oculto no instante $t$ só pode ser calculado após o instante $t-1$, não é possível processar os passos de tempo de forma simultânea, o que torna o treinamento em sequências longas lento e de difícil escalonamento. Em segundo lugar, as dependências de longo alcance são difíceis de capturar: informações presentes no início de uma sequência longa precisam atravessar muitos passos recorrentes para influenciar o processamento de elementos distantes, o que leva ao problema do desaparecimento do gradiente (\textit{vanishing gradient}), no qual os sinais de treinamento se tornam progressivamente mais fracos ao serem propagados de volta por muitos passos. Embora as arquiteturas LSTM e GRU atenuem parcialmente esse problema por meio de mecanismos de portas, elas não o eliminam completamente. Essas limitações motivaram a busca por uma arquitetura capaz de capturar dependências arbitrárias em sequências de forma paralela e eficiente.
+
+\subsection{Mecanismo de Atenção}\label{subsec:atencao}
+
+O mecanismo de atenção é o componente central que permite ao \textit{Transformer} superar as limitações das arquiteturas recorrentes. A ideia fundamental é que, ao processar um elemento de uma sequência, o modelo deve ser capaz de ponderar a relevância de todos os outros elementos simultaneamente, em vez de depender de um estado oculto que carrega informação de forma comprimida e sequencial.
+
+Uma analogia útil é a de um sistema de recuperação de informação: dado um elemento de consulta (\textit{query}), o mecanismo de atenção percorre todos os elementos disponíveis (\textit{keys}) e atribui a cada um deles um peso que indica o quanto aquele elemento é relevante para a consulta. Os valores associados (\textit{values}) são então ponderados por esses pesos e somados, produzindo uma representação contextualizada do elemento de consulta. Assim, a representação de uma palavra em uma frase não é fixa; ela é computada dinamicamente em função do contexto em que aparece.
+
+A inovação do \textit{Transformer} proposto por \citeonline{Vaswani2017} foi dispensar completamente a recorrência e a convolução, construindo a arquitetura exclusivamente sobre esse mecanismo de atenção aplicado à própria sequência de entrada. Isso possibilita que todas as posições da sequência se comuniquem diretamente entre si em uma única operação, tornando o cálculo paralelizável e as dependências de longo alcance igualmente acessíveis que as de curto alcance.
+
+\subsection{Autoatenção e Atenção Multi-Cabeça}\label{subsec:autoatencao}
+
+A operação central do \textit{Transformer} é a \textit{autoatenção} (\textit{self-attention}), na qual a consulta, a chave e o valor são todos derivados da mesma sequência de entrada. Formalmente, a partir de uma sequência de representações de entrada, três matrizes de projeção aprendíveis transformam cada representação em três vetores: o vetor de consulta $Q$ (\textit{query}), o vetor de chave $K$ (\textit{key}) e o vetor de valor $V$ (\textit{value}). A compatibilidade entre uma consulta e todas as chaves é calculada por produto escalar, resultando em pesos que indicam quanta atenção cada posição deve receber. A operação completa é denominada \textit{Scaled Dot-Product Attention} e é definida por:
+
+\[
+    \text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+\]
+
+onde $Q$, $K$ e $V$ são matrizes contendo os vetores de consulta, chave e valor para todos os elementos da sequência; $d_k$ é a dimensão dos vetores de chave; e a divisão por $\sqrt{d_k}$ é um fator de escala que estabiliza o treinamento, evitando que produtos escalares de grande magnitude levem a gradientes muito pequenos após a operação \textit{softmax} \cite{Vaswani2017}. A \textit{softmax} normaliza os scores em uma distribuição de probabilidades, que é então usada para ponderar a soma dos vetores de valor $V$.
+
+Entretanto, uma única operação de atenção é limitada: ela projeta todas as informações em um único subespaço de representação. Para superar essa restrição, \citeonline{Vaswani2017} propõem a \textbf{atenção multi-cabeça} (\textit{multi-head attention}), que executa $h$ operações de atenção em paralelo, cada uma com suas próprias matrizes de projeção. Cada operação é denominada uma cabeça de atenção (\textit{attention head}). As saídas das $h$ cabeças são concatenadas e projetadas por uma matriz aprendível, produzindo a representação final. Esse mecanismo permite que o modelo capture diferentes tipos de relações e dependências simultaneamente, em distintos subespaços de representação. Do ponto de vista da compressão, as cabeças de atenção são unidades podáveis naturais na poda estruturada de modelos \textit{Transformer}: cabeças de menor importância podem ser removidas inteiramente, reduzindo o custo computacional da inferência sem a necessidade de \textit{hardware} especializado para lidar com esparsidade não estruturada.
+
+% SUGESTÃO DE FIGURA: diagrama comparativo entre Scaled Dot-Product Attention (esquerda) e Multi-Head Attention (direita), conforme Vaswani et al. (2017), Fig. 2.
+
+\subsection{Estrutura do Bloco Transformer}\label{subsec:bloco_transformer}
+
+O \textit{Transformer} é organizado em blocos empilhados, cada um composto por dois sub-módulos principais: uma camada de autoatenção multi-cabeça e uma rede \textit{feedforward} totalmente conectada (também denominada MLP, de \textit{multilayer perceptron}). Cada sub-módulo é seguido por normalização de camada (\textit{layer normalization}) e envolto por uma conexão residual (\textit{residual connection} ou \textit{skip connection}), o que favorece o fluxo de gradientes durante o treinamento e permite o empilhamento de muitos blocos sem degradação \cite{Vaswani2017}. A função da camada de autoatenção é integrar informações contextuais de toda a sequência; a função da rede MLP é transformar e enriquecer as representações individuais de cada posição de forma independente.
+
+A rede MLP interna de cada bloco é tipicamente composta por duas transformações lineares com uma função de ativação não linear entre elas (geralmente ReLU ou GELU), com uma dimensão intermediária maior do que a dimensão do modelo. Essa expansão e contração dimensionais aumentam a capacidade de representação do bloco. A normalização de camada estabiliza as ativações ao longo do treinamento, normalizando-as ao longo da dimensão das características.
+
+A arquitetura completa de um modelo baseado em \textit{Transformer} consiste em um número $L$ de blocos empilhados. A título de referência, o GPT-2 na variante \textit{small} é composto por 12 blocos desse tipo. Do ponto de vista da poda estruturada, essa organização em blocos expõe múltiplos alvos naturais: os neurônios da camada MLP (remoção de neurônios intermediários), as cabeças de atenção (remoção de cabeças inteiras) e, em casos de compressão mais agressiva, blocos inteiros. A granularidade da poda estruturada em \textit{Transformers} é, portanto, mais rica do que em redes convolucionais, onde os alvos típicos são filtros e canais.
+
+\subsection{Modelos de Linguagem de Grande Escala e o GPT-2}\label{subsec:llm_gpt2}
+
+Modelos de linguagem de grande escala (\textit{Large Language Models}, LLMs) são redes neurais profundas, geralmente baseadas na arquitetura \textit{Transformer}, treinadas em grandes corpora textuais com o objetivo de aprender representações estatísticas da linguagem. A tarefa de pré-treinamento mais comum é a modelagem de linguagem autorregressiva: dado um contexto de tokens anteriores, o modelo é treinado para prever o próximo token, maximizando a probabilidade condicional $P(\text{token}_t \mid \text{token}_1, \ldots, \text{token}_{t-1})$. Esse objetivo simples, aplicado em escala massiva de dados e parâmetros, resulta em modelos com capacidades emergentes em diversas tarefas de linguagem \cite{Goodfellow2016}.
+
+O GPT-2 (\textit{Generative Pre-trained Transformer 2}), proposto por \citeonline{Radford2019}, foi desenvolvido pela OpenAI e publicado em 2019. Trata-se de um modelo autorregressivo baseado exclusivamente no componente decodificador do \textit{Transformer} original, treinado em um corpus de aproximadamente 40 GB de texto coletado da internet. A variante GPT-2 \textit{small}, utilizada neste trabalho, possui 12 blocos \textit{Transformer}, 12 cabeças de atenção por bloco, dimensão de modelo igual a 768 e aproximadamente 124 milhões de parâmetros treináveis. A modelagem autorregressiva do GPT-2 permite que ele seja utilizado tanto para tarefas de geração de texto quanto como objeto de estudo para compressão, uma vez que sua inferência exige o processamento sequencial de tokens, tornando cada operação no bloco \textit{Transformer} parte do caminho crítico de latência.
+
+O crescimento em escala dos LLMs, com modelos que chegam a centenas de bilhões de parâmetros, torna proibitivo seu uso em ambientes com restrições computacionais ou energéticas. Mesmo modelos de médio porte como o GPT-2 representam candidatos relevantes para técnicas de poda: a remoção de cabeças de atenção redundantes e de neurônios MLP de baixa importância pode reduzir substancialmente o custo de inferência, com impacto controlado sobre a qualidade das predições. Esse é o foco central dos experimentos de poda estruturada conduzidos neste trabalho.
