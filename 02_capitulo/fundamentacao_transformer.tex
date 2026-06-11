@@ -92,21 +92,21 @@ aproveitando ao máximo o poder das GPUs modernas.
 
 A variante do mecanismo de atenção utilizada no \textit{Transformer} é chamada de
 autoatenção (\textit{self-attention}). O prefixo ``auto'' indica que a consulta, a chave
-e o valor são todos derivados da \textit{mesma} sequência de entrada. Em outras palavras,
+e o valor são todos derivados da mesma sequência de entrada. Ou seja,
 ao processar uma frase, cada palavra pergunta a si mesma: ``quais outras palavras desta
-frase são relevantes para minha interpretação?''. Considere a frase ``O gato que estava
+frase são relevantes para minha interpretação?''. Exemplo: ``O gato que estava
 no telhado dormiu''. Ao processar a palavra ``dormiu'', o mecanismo de autoatenção
 calcula um peso para cada palavra da frase. A palavra ``gato'' recebe peso alto, pois é
 o sujeito do verbo; palavras como ``telhado'' ou ``no'' recebem pesos baixos, pois são
 menos relevantes para determinar quem dormiu.
 
-Na prática, esses pesos são calculados da seguinte forma. A partir de cada representação
+Na prática, esses pesos são calculados da seguinte forma, a partir de cada representação
 de entrada, três matrizes de pesos aprendíveis durante o treinamento transformam cada
 representação em três vetores: o vetor de consulta $Q$ (\textit{query}), o vetor de
 chave $K$ (\textit{key}) e o vetor de valor $V$ (\textit{value}). O grau de compatibilidade
 entre uma consulta e cada chave é calculado pelo produto escalar entre eles. Esses valores
 brutos de compatibilidade passam pela função \textit{softmax}, que os converte em uma
-distribuição de probabilidades --- isto é, um conjunto de números entre 0 e 1 que somam
+distribuição de probabilidades, isto é, um conjunto de números entre 0 e 1 que somam
 exatamente 1. Esses pesos normalizados determinam com que intensidade cada valor $V$
 contribui para o resultado final, que é obtido pela soma ponderada dos valores.
 
@@ -124,7 +124,7 @@ $QK^\top$ realiza o produto escalar entre todas as consultas e todas as chaves d
 vez, produzindo uma matriz de \textit{scores} (pontuações) que indica o quanto cada par de
 posições é compatível. $d_k$ é a dimensão dos vetores de chave; a divisão por $\sqrt{d_k}$
 é um fator de escala que evita que os valores do produto escalar cresçam em magnitude
-quando $d_k$ é grande --- magnitudes muito altas causam gradientes muito pequenos após a
+quando $d_k$ é grande, uma veez quee magnitudes muito altas causam gradientes muito pequenos após a
 \textit{softmax}, dificultando o treinamento \cite{Vaswani2017}. A \textit{softmax}
 normaliza esses \textit{scores} em probabilidades. Por fim, a multiplicação por $V$
 combina os vetores de valor com esses pesos, produzindo a representação contextualizada
@@ -149,8 +149,9 @@ sintáticos, sem custo adicional expressivo em relação à atenção simples.
 Sob a perspectiva da compressão de modelos, as cabeças de atenção constituem unidades
 podáveis naturais para a poda estruturada: estudos da literatura demonstram que nem todas
 as cabeças são igualmente úteis, e que algumas podem ser removidas inteiramente sem
-degradação significativa da qualidade das predições \cite{Michel2019}. Essa propriedade
-é explorada diretamente nos experimentos deste trabalho.
+degradação significativa da qualidade das predições \cite{Michel2019}. 
+% Essa propriedade
+% é explorada diretamente nos experimentos deste trabalho.
 
 % SUGESTÃO DE FIGURA: diagrama comparativo entre Scaled Dot-Product Attention (esquerda,
 % mostrando Q, K, V, o produto escalar, a softmax e a ponderação de V) e Multi-Head
@@ -169,44 +170,55 @@ Esse par de operações se repete em cada bloco, e os blocos são empilhados, fa
 que as representações das palavras se tornem progressivamente mais ricas e abstratas a
 cada andar.
 
-Os dois componentes internos de cada bloco merecem descrição detalhada. O primeiro é a
+O primeiro bloco é a
 camada de atenção multi-cabeça, já apresentada na seção anterior, responsável por
 integrar informação contextual de toda a sequência. O segundo é uma rede
 \textit{feedforward} totalmente conectada --- um MLP (\textit{multilayer perceptron})
 aplicado de forma idêntica e independente a cada posição. Esse MLP é composto por duas
-transformações lineares com uma função de ativação não linear entre elas: a função GELU
-(\textit{Gaussian Error Linear Unit}) nos modelos GPT, ou ReLU em outras variantes. A
+transformações lineares com uma função de ativação não linear entre elas: \modificado{a função GELU
+(\textit{Gaussian Error Linear Unit}) \cite{Hendrycks2016} nos modelos GPT, ou ReLU em outras variantes.
+\adicionadomarcelo{A GELU pertence à classe das ativações suaves (\textit{smooth activations}): em vez
+de simplesmente suprimir valores negativos como a ReLU \cite{Nair2010}, ela pondera cada entrada $x$
+pela probabilidade de que $x$ seja positivo sob uma distribuição gaussiana padrão, resultando na
+expressão $\mathrm{GELU}(x) = x \cdot \Phi(x)$, onde $\Phi(x)$ é a função de distribuição
+acumulada da distribuição normal.
+Na prática, essa ponderação produz uma transição contínua e diferenciável em torno da origem, evitando
+o chamado problema de ``neurônios mortos'' (\textit{dying ReLU}), no qual unidades com ativação ReLU
+podem permanecer permanentemente inativas durante o treinamento por receberem gradiente nulo.
+A transição suave da GELU foi apontada como especialmente benéfica em modelos de linguagem de grande
+escala, razão pela qual \citeonline{Radford2019} a adotaram como ativação padrão nos modelos da família
+GPT.}} A
 dimensão intermediária desse MLP é tipicamente quatro vezes maior do que a dimensão
 do modelo --- no GPT-2 \textit{small}, a dimensão do modelo é 768 e a dimensão
 intermediária é 3.072 --- o que confere ao bloco grande capacidade de representação antes
 de comprimir novamente a informação.
 
-Cada um dos dois sub-módulos é envolvido por dois mecanismos que facilitam o treinamento
-de modelos profundos. O primeiro é a conexão residual (\textit{residual connection}),
-idêntica em conceito à utilizada nas redes ResNet \cite{He2016}: a entrada do
-sub-módulo é somada diretamente à sua saída, criando um ``atalho'' que permite ao gradiente
-fluir mais facilmente para camadas anteriores durante o \textit{backpropagation}. O leitor
-familiarizado com arquiteturas convolucionais reconhecerá esse mecanismo. O segundo é a
-normalização de camada (\textit{layer normalization}), que estabiliza as ativações ao
-longo do treinamento, normalizando-as ao longo da dimensão das representações em vez da
-dimensão do lote, tornando o treinamento mais estável e menos sensível à taxa de
-aprendizado.
+% Cada um dos dois sub-módulos é envolvido por dois mecanismos que facilitam o treinamento
+% de modelos profundos. O primeiro é a conexão residual (\textit{residual connection}),
+% idêntica em conceito à utilizada nas redes ResNet \cite{He2016}: a entrada do
+% sub-módulo é somada diretamente à sua saída, criando um ``atalho'' que permite ao gradiente
+% fluir mais facilmente para camadas anteriores durante o \textit{backpropagation}. O leitor
+% familiarizado com arquiteturas convolucionais reconhecerá esse mecanismo. O segundo é a
+% normalização de camada (\textit{layer normalization}), que estabiliza as ativações ao
+% longo do treinamento, normalizando-as ao longo da dimensão das representações em vez da
+% dimensão do lote, tornando o treinamento mais estável e menos sensível à taxa de
+% aprendizado.
 
-A arquitetura completa de um modelo baseado em \textit{Transformer} consiste em um número
-$L$ de blocos empilhados. O GPT-2 \textit{small} possui $L = 12$ blocos. Cada bloco
-adicional aumenta a capacidade do modelo de aprender representações mais abstratas, da
-mesma forma que camadas mais profundas em uma rede convolucional capturam características
-visuais progressivamente mais complexas. Essa profundidade, porém, vem com custo
-computacional e energético proporcional: cada bloco extra adiciona parâmetros e operações
-ao caminho de cada inferência.
+% A arquitetura completa de um modelo baseado em \textit{Transformer} consiste em um número
+% $L$ de blocos empilhados. O GPT-2 \textit{small} possui $L = 12$ blocos. Cada bloco
+% adicional aumenta a capacidade do modelo de aprender representações mais abstratas, da
+% mesma forma que camadas mais profundas em uma rede convolucional capturam características
+% visuais progressivamente mais complexas. Essa profundidade, porém, vem com custo
+% computacional e energético proporcional: cada bloco extra adiciona parâmetros e operações
+% ao caminho de cada inferência.
 
-Do ponto de vista da compressão, essa organização modular expõe múltiplos alvos para a
-poda estruturada: os neurônios intermediários da camada MLP (que podem ser removidos
-reduzindo a dimensão intermediária), as cabeças de atenção (que podem ser eliminadas
-inteiramente) e, em cenários de compressão mais agressiva, blocos \textit{Transformer}
-inteiros. Essa variedade de alvos torna a poda estruturada em modelos \textit{Transformer}
-mais rica em granularidade do que em redes convolucionais como a ResNet-50, onde os
-alvos típicos são filtros e canais de convolução \cite{Li2017}.
+% Do ponto de vista da compressão, essa organização modular expõe múltiplos alvos para a
+% poda estruturada: os neurônios intermediários da camada MLP (que podem ser removidos
+% reduzindo a dimensão intermediária), as cabeças de atenção (que podem ser eliminadas
+% inteiramente) e, em cenários de compressão mais agressiva, blocos \textit{Transformer}
+% inteiros. Essa variedade de alvos torna a poda estruturada em modelos \textit{Transformer}
+% mais rica em granularidade do que em redes convolucionais como a ResNet-50, onde os
+% alvos típicos são filtros e canais de convolução \cite{Li2017}.
 
 % SUGESTÃO DE FIGURA: diagrama de um único bloco Transformer (decoder-only), mostrando
 % a camada de atenção multi-cabeça, a camada MLP feedforward, as conexões residuais e
@@ -225,7 +237,7 @@ espaço. Dada a sequência ``O aluno abriu o'', um LLM bem treinado atribuiria a
 probabilidade a tokens como ``livro'', ``caderno'' ou ``computador'', e baixa probabilidade
 a tokens como ``foguete'' ou ``plutônio''. Repetida bilhões de vezes sobre textos variados,
 essa tarefa aparentemente simples força o modelo a aprender gramática, fatos sobre o mundo,
-raciocínio básico e muito mais \cite{Goodfellow2016}.
+raciocínio básico e muito mais \cite{Radford2019}.
 
 Para que o texto possa ser processado numericamente, ele precisa primeiro ser convertido
 em tokens e depois em vetores numéricos. Essa conversão ocorre em duas etapas. A primeira
@@ -257,6 +269,7 @@ milhares ou milhões de vezes por dia. A poda estruturada surge, nesse contexto,
 estratégia concreta para reduzir esses custos: a remoção de cabeças de atenção
 redundantes e de neurônios MLP de baixa importância pode diminuir substancialmente a
 contagem de operações por inferência, com impacto controlado sobre a qualidade das
-predições \cite{Patterson2021}. Esse potencial de redução do consumo energético via poda
-estruturada em modelos \textit{Transformer} é o foco central dos experimentos conduzidos
-neste trabalho.
+predições \cite{Patterson2021}. 
+% Esse potencial de redução do consumo energético via poda
+% estruturada em modelos \textit{Transformer} é o foco central dos experimentos conduzidos
+% neste trabalho.
