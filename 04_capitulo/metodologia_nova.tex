@@ -4,7 +4,7 @@
 
 \chapter{Metodologia}\label{chap:metodologia}
 
-Este capítulo apresenta o percurso metodológico adotado no trabalho, organizado em cinco etapas.
+Este capítulo apresenta a metodologia adotada neste trabalho. Ele está organizado em cinco etapas. \comentline{Citar cada uma das cinco etapas}
 As decisões concretas decorrentes desses critérios --- incluindo o modelo selecionado, os
 \textit{datasets} empregados e as configurações de poda --- são descritas no
 Capítulo~\ref{chap:desenvolvimento}.
@@ -26,10 +26,11 @@ Para a seleção do modelo de referência, foram adotados os seguintes critério
     \item ser um LLM representativo, amplamente utilizado na literatura de compressão de modelos;
     \item dispor de pesos pré-treinados publicamente disponíveis;
     \item apresentar tamanho compatível com as restrições de \textit{hardware} disponível;
-    \item possuir ampla documentação em trabalhos de poda neural;
-    \item \modificado{contar com implementação acessível em \textit{frameworks} consolidados,
-          como PyTorch.}
+    \item possuir \st{ampla} documentação em trabalhos de poda neural;
+    \item \modificado{contar com implementação acessível em \textit{frameworks} consolidados, como PyTorch.}
 \end{itemize}
+
+\comentline{Sobre os critérios de escolha: refinar para deixar critérios mais objetivos, por exemplo, o que significa ''ser um LLM representativo''}
 
 % AJUSTE: reunião 13/05 — Hugging Face como plataforma, não biblioteca
 \adicionadomarcelo{A implementação do modelo de referência utiliza a biblioteca PyTorch \cite{Paszke2019}.
@@ -39,6 +40,8 @@ escala publicamente acessíveis --- como, por exemplo, variantes do GPT-2.
 O modelo selecionado a partir dos critérios estabelecidos --- incluindo a versão específica
 obtida via Hugging Face --- é apresentado e detalhado no
 Capítulo~\ref{chap:desenvolvimento}.}
+
+\comentline{Sobre a escolha do modelo: é importante listar outros candidatos, se possível adicionar uma tabela para mostrar em qual requisito os outros candidatos não atendem.}
 
 % -------------------------------------------------------
 \section{Implementação das Estratégias de Poda sem Otimização}\label{sec:metodologia_poda_sem}
@@ -51,12 +54,16 @@ modelo pré-treinado, eliminando pesos ou estruturas avaliadas como menos releva
 desempenho preditivo. Serão avaliadas duas estratégias de poda clássicas, escolhidas por
 representarem os dois extremos do espectro de granularidade da poda neural:
 
+\comentline{Por que a escolha dessas estratégias de poda, considerando que existem outras opções?}
+
+
+
 \begin{itemize}
-    \item poda baseada em magnitude dos pesos \cite{Han2015}, que remove parâmetros
+    \item \textcolor{red}{poda não estruturada: poda por magnitude}poda baseada em magnitude dos pesos \cite{Han2015}, que remove parâmetros
           individuais cujos valores absolutos são inferiores a um limiar; representa a
           granularidade mais fina possível e gera modelos esparsos sem alteração da
           estrutura física do modelo;
-    \item poda estruturada \cite{Li2017}, que elimina unidades arquiteturais inteiras
+    \item \textcolor{red}{poda estruturada: poda de cabeças}poda estruturada \cite{Li2017}, que elimina unidades arquiteturais inteiras
           --- como filtros convolucionais ou cabeças de atenção --- reduzindo fisicamente
           as dimensões dos tensores e gerando modelos computacionalmente mais enxutos.
 \end{itemize}}
